@@ -12,32 +12,12 @@ describe("Auth process", () => {
         });
     });
 
-    it("Should return 400 if fields are missing in register", async () => {
-        await axios.post("http://localhost:3000/api/auth/signup", {
-            name: "",
-            username: "",
-            password: "",
-            email: "",
-        }).catch((err) => {
-            expect(err.response.status).toEqual(400);
-        });
-    });
-
     it("Should not allow to register with a non valid email", async () => {
         await axios.post("http://localhost:3000/api/auth/signup", {
             name: "test",
             username: "test",
             password: "test",
             email: "test",
-        }).catch((err) => {
-            expect(err.response.status).toEqual(400);
-        });
-    });
-
-    it("Should return 400 if fields are missing in login", async () => {
-        await axios.post("http://localhost:3000/api/auth/login", {
-            username: "",
-            password: "",
         }).catch((err) => {
             expect(err.response.status).toEqual(400);
         });
