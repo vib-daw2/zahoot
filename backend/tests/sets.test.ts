@@ -1,6 +1,5 @@
 import axios from "axios";
 import getDb from "../prisma/db";
-import { log } from "console";
 
 describe("Sets CRUD should work", () => {
 
