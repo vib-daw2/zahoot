@@ -44,6 +44,4 @@ export default async function handleLogin(req: Request, res: Response) {
         });
     }
 
-
-
 }
