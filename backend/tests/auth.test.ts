@@ -60,10 +60,8 @@ describe("Auth process", () => {
             email: "test@test.test"
         }).then((data) => {
             expect(data.status).toEqual(200);
-            expect(data.data.status).toEqual("success");
-        }).catch((err) => {
-            console.log(err);
-        });
+            expect(data.data.error).toEqual(false);
+        })
 
         await axios.post("http://localhost:3000/api/auth/signup", {
             name: "test",
@@ -83,10 +81,8 @@ describe("Auth process", () => {
             email: "test@test.test"
         }).then((data) => {
             expect(data.status).toEqual(200);
-            expect(data.data.status).toEqual("success");
-        }).catch((err) => {
-            console.log(err);
-        });
+            expect(data.data.error).toEqual(false);
+        })
 
         let token = "";
 
@@ -97,9 +93,7 @@ describe("Auth process", () => {
             expect(data.status).toEqual(200);
             expect(data.data.token).toBeDefined();
             token = data.data.token;    
-        }).catch((err) => {
-            console.log(err);
-        });
+        })
 
         // Wait 1 sec
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -112,9 +106,7 @@ describe("Auth process", () => {
                 throw new Error("Tokens are the same");
             }
             expect(data.status).toEqual(200);
-        }).catch((err) => {
-            console.log(err);
-        });
+        })
     });
 
     it("Should return 401 if the password is incorrect", async () => {
@@ -125,10 +117,8 @@ describe("Auth process", () => {
             email: "test@test.test"
         }).then((data) => {
             expect(data.status).toEqual(200);
-            expect(data.data.status).toEqual("success");
-        }).catch((err) => {
-            console.log(err);
-        });
+            expect(data.data.error).toEqual(false);
+        })
 
         await axios.post("http://localhost:3000/api/auth/login", {
             username: "test",
@@ -142,8 +132,6 @@ describe("Auth process", () => {
             password: "test",
         }).then((data) => {
             expect(data.status).toEqual(200);
-        }).catch((err) => {
-            console.log(err);
-        });
+        })
     });
 });

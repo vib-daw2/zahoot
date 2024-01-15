@@ -1,17 +1,20 @@
 import { Request, Response } from "express";
-import { loginRequestSchema } from "../../schemas/loginRequest";
+import { loginRequestSchema } from "../../schemas/auth/loginRequest";
 import getDb from "../../prisma/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { jwtPayload } from "../../types/jwtPayload";
+import { loginResponse } from "../../schemas/auth/loginResponse";
 
 export default async function handleLogin(req: Request, res: Response) {
     const validated = loginRequestSchema.safeParse(req.body);
 
     if (!validated.success) {
-        return res.status(400).json({
-            status: "error",
-            message: validated.error,
-        });
+        const response: loginResponse = {
+            error: true,
+            message: validated.error.message,
+        };
+        return res.status(400).json(response);
     }
 
     const db = await getDb();
@@ -23,25 +26,29 @@ export default async function handleLogin(req: Request, res: Response) {
     });
 
     if (!user) {
-        return res.status(401).json({
-            status: "error",
+        const response: loginResponse = {
+            error: true,
             message: "Invalid username or password",
-        });
+        };
+        return res.status(401).json(response);
     } else if (!(await bcrypt.compare(validated.data.password, user.password))) {
-        return res.status(401).json({
-            status: "error",
+        const response: loginResponse = {
+            error: true,
             message: "Invalid username or password",
-        });
+        };
+        return res.status(401).json(response);
     } else {
-        return res.status(200).json({
-            status: "success",
+        const payload: jwtPayload = {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+        };
+        const response: loginResponse = {
+            error: false,
             message: "User logged in successfully",
-            token: jwt.sign({
-                id: user.id,
-                username: user.username,
-                email: user.email,
-            }, process.env.JWT_SECRET!)
-        });
+            token: jwt.sign(payload, process.env.JWT_SECRET!),
+        };
+        return res.status(200).json(response);
     }
 
 }

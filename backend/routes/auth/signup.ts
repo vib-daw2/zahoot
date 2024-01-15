@@ -1,17 +1,19 @@
 import { Request, Response } from 'express';
-import { signupRequestSchema } from '../../schemas/signupRequest';
+import { signupRequestSchema } from '../../schemas/auth/signupRequest';
 import getDb from '../../prisma/db';
 import bcrypt from 'bcrypt';
+import { signupResponse } from '../../schemas/auth/signupResponse';
 
 export default async function handleSignup(req: Request, res: Response) {
 
     const validated = signupRequestSchema.safeParse(req.body);
 
     if (!validated.success) {
-        return res.status(400).json({
-            status: "error",
-            message: validated.error,
-        });
+        const response: signupResponse = {
+            error: true,
+            message: validated.error.message
+        };
+        return res.status(400).json(response);
     }
 
     const db = await getDb();
@@ -28,10 +30,11 @@ export default async function handleSignup(req: Request, res: Response) {
             ]
         }
     })) {
-        return res.status(409).json({
-            status: "error",
+        const response: signupResponse = {
+            error: true,
             message: "User already exists"
-        });
+        };
+        return res.status(409).json(response);
     } else {
         let hashed = await bcrypt.hash(validated.data.password, 10);
         await db.user.create({
@@ -42,9 +45,10 @@ export default async function handleSignup(req: Request, res: Response) {
                 email: validated.data.email,
             }
         });
-        return res.status(200).json({
-            status: "success",
-            message: "User created successfully"
-        });
+        const response: signupResponse = {
+            error: false,
+            message: "User created"
+        };
+        return res.status(200).json(response);
     }
 }

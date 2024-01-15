@@ -5,6 +5,14 @@ import authRouter from "./routes/auth/router";
 
 dotenv.config();
 
+if (!process.env.JWT_SECRET) {
+  console.error("JWT_SECRET not set");
+  process.exit(1);
+} else if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL not set");
+  process.exit(1);
+} 
+
 const app = express();
 
 app.use(express.json());
