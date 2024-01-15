@@ -6,7 +6,7 @@ describe("Test", () => {
     });
 
     it("should respond to ping", async () => {
-        await axios.get("http://localhost:3000/ping").then(res => {
+        await axios.get("http://localhost:3000/api/ping").then(res => {
             expect(res.status).toBe(200);
             expect(res.data).toBe("pong");
         });
