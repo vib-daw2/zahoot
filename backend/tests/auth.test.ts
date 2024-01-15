@@ -13,7 +13,7 @@ describe("Auth process", () => {
     });
 
     it("Should return 400 if fields are missing in register", async () => {
-        await axios.post("http://localhost:3000/signup", {
+        await axios.post("http://localhost:3000/api/auth/signup", {
             name: "",
             username: "",
             password: "",
@@ -24,7 +24,7 @@ describe("Auth process", () => {
     });
 
     it("Should not allow to register with a non valid email", async () => {
-        await axios.post("http://localhost:3000/signup", {
+        await axios.post("http://localhost:3000/api/auth/signup", {
             name: "test",
             username: "test",
             password: "test",
@@ -35,7 +35,7 @@ describe("Auth process", () => {
     });
 
     it("Should return 400 if fields are missing in login", async () => {
-        await axios.post("http://localhost:3000/login", {
+        await axios.post("http://localhost:3000/api/auth/login", {
             username: "",
             password: "",
         }).catch((err) => {
@@ -44,7 +44,7 @@ describe("Auth process", () => {
     });
 
     it("Should return 401 if user is not registered", async () => {
-        await axios.post("http://localhost:3000/login", {
+        await axios.post("http://localhost:3000/api/auth/login", {
             username: "test",
             password: "test",
         }).catch((err) => {
@@ -53,7 +53,7 @@ describe("Auth process", () => {
     });
 
     it("Should return 409 if the user already exists", async () => {
-        await axios.post("http://localhost:3000/signup", {
+        await axios.post("http://localhost:3000/api/auth/signup", {
             name: "test",
             username: "test",
             password: "test",
@@ -65,7 +65,7 @@ describe("Auth process", () => {
             console.log(err);
         });
 
-        await axios.post("http://localhost:3000/signup", {
+        await axios.post("http://localhost:3000/api/auth/signup", {
             name: "test",
             username: "test",
             password: "test",
@@ -76,7 +76,7 @@ describe("Auth process", () => {
     });
 
     it("Should register and login", async () => {
-        await axios.post("http://localhost:3000/signup", {
+        await axios.post("http://localhost:3000/api/auth/signup", {
             name: "test",
             username: "test",
             password: "test",
@@ -90,7 +90,7 @@ describe("Auth process", () => {
 
         let token = "";
 
-        await axios.post("http://localhost:3000/login", {
+        await axios.post("http://localhost:3000/api/auth/login", {
             username: "test",
             password: "test",
         }).then((data) => {
@@ -103,7 +103,7 @@ describe("Auth process", () => {
         // Wait 1 sec
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        await axios.post("http://localhost:3000/login", {
+        await axios.post("http://localhost:3000/api/auth/login", {
             username: "test",
             password: "test",
         }).then((data) => {
@@ -117,7 +117,7 @@ describe("Auth process", () => {
     });
 
     it("Should return 401 if the password is incorrect", async () => {
-        await axios.post("http://localhost:3000/signup", {
+        await axios.post("http://localhost:3000/api/auth/signup", {
             name: "test",
             username: "test",
             password: "test",
@@ -129,14 +129,14 @@ describe("Auth process", () => {
             console.log(err);
         });
 
-        await axios.post("http://localhost:3000/login", {
+        await axios.post("http://localhost:3000/api/auth/login", {
             username: "test",
             password: "test2",
         }).catch((err) => {
             expect(err.response.status).toEqual(400);
         });
 
-        await axios.post("http://localhost:3000/login", {
+        await axios.post("http://localhost:3000/api/auth/login", {
             username: "test",
             password: "test",
         }).then((data) => {
