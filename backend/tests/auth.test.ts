@@ -95,7 +95,8 @@ describe("Auth process", () => {
             password: "test",
         }).then((data) => {
             expect(data.status).toEqual(200);
-            token = data.data.jwt;
+            expect(data.data.token).toBeDefined();
+            token = data.data.token;    
         }).catch((err) => {
             console.log(err);
         });
@@ -107,7 +108,7 @@ describe("Auth process", () => {
             username: "test",
             password: "test",
         }).then((data) => {
-            if (data.data.jwt === token) {
+            if (data.data.token === token) {
                 throw new Error("Tokens are the same");
             }
             expect(data.status).toEqual(200);
@@ -133,7 +134,7 @@ describe("Auth process", () => {
             username: "test",
             password: "test2",
         }).catch((err) => {
-            expect(err.response.status).toEqual(400);
+            expect(err.response.status).toEqual(401);
         });
 
         await axios.post("http://localhost:3000/api/auth/login", {

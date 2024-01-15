@@ -5,12 +5,12 @@ import bcrypt from 'bcrypt';
 
 export default async function handleSignup(req: Request, res: Response) {
 
-    const validatedSignupRequest = signupRequestSchema.safeParse(req.body);
+    const validated = signupRequestSchema.safeParse(req.body);
 
-    if (!validatedSignupRequest.success) {
+    if (!validated.success) {
         return res.status(400).json({
             status: "error",
-            message: validatedSignupRequest.error,
+            message: validated.error,
         });
     }
 
@@ -20,10 +20,10 @@ export default async function handleSignup(req: Request, res: Response) {
         where: {
             OR: [
                 {
-                    username: validatedSignupRequest.data.username
+                    username: validated.data.username
                 },
                 {
-                    email: validatedSignupRequest.data.email
+                    email: validated.data.email
                 }
             ]
         }
@@ -33,13 +33,13 @@ export default async function handleSignup(req: Request, res: Response) {
             message: "User already exists"
         });
     } else {
-        let hashed = await bcrypt.hash(validatedSignupRequest.data.password, 10);
+        let hashed = await bcrypt.hash(validated.data.password, 10);
         await db.user.create({
             data: {
-                name: validatedSignupRequest.data.name,
-                username: validatedSignupRequest.data.username,
+                name: validated.data.name,
+                username: validated.data.username,
                 password: hashed,
-                email: validatedSignupRequest.data.email,
+                email: validated.data.email,
             }
         });
         return res.status(200).json({
