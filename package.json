@@ -10,11 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.1",
-    "axios": "^1.6.5",
-    "body-parser": "^1.20.2",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "million": "^2.6.4",
@@ -24,9 +19,6 @@
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
-    "@types/body-parser": "^1.19.5",
-    "@types/express": "^4.17.21",
-    "@types/jest": "^29.5.11",
     "@types/node": "^20.10.7",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
@@ -38,9 +30,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.33",
-    "prisma": "^5.7.1",
     "tailwindcss": "^3.4.1",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   }
