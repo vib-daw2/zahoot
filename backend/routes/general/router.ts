@@ -1,13 +1,11 @@
 import express from 'express';
 import handlePing from './ping';
+import authMiddleware from '../../middleware/auth';
 
 const router = express.Router();
 
-router.use('/', (req, res, next) => {
-    next();
-});
-
-router.get('/api/ping', handlePing);
+router.get('/ping', handlePing);
+router.get('/ping-auth', authMiddleware, handlePing);
 
 // Export the router
 export default router;

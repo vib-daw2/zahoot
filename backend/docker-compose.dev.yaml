@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: zahoot
+      MYSQL_USER: backend
+      MYSQL_PASSWORD: 123456
+    volumes:
+    - zahoot_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+volumes:
+  zahoot_data:
