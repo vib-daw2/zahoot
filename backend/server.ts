@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import generalRouter from "./routes/general/router";
 import authRouter from "./routes/auth/router";
+import setsRouter from "./routes/sets/router";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use("/api", generalRouter); // Ping (health check)
 app.use("/api/auth", authRouter); // Signup, login
+app.use("/api/sets", setsRouter); // Create, read, update, delete sets
 
 
 const port = process.env.PORT || 3000;
