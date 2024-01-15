@@ -10,8 +10,6 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PROD_PASSWORD}
     volumes:
     - zahoot_data:/var/lib/mysql
-    ports:
-      - 3306:3306
     networks:
       - zahoot-network
   backend:
@@ -21,6 +19,8 @@ services:
     environment:
       DATABASE_URL: mysql://backend:${MYSQL_PROD_PASSWORD}@db:3306/zahoot
       JWT_SECRET: ${JWT_PROD_SECRET}
+    ports:
+      - "3000:3000"
 volumes:
   zahoot_data:
 networks:
