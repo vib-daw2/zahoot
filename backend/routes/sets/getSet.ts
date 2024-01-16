@@ -10,6 +10,7 @@ export async function handleGetMySets(req: Request, res: Response) {
             id: true,
             name: true,
             description: true,
+            isPublic: true,
             Questions: {
                 select: {
                     id: true,
@@ -24,10 +25,12 @@ export async function handleGetMySets(req: Request, res: Response) {
 
     const response: getSetByIdResponse[] = sets.map((set: any) => {
         return {
+            success: true,
             id: set.id,
             name: set.name,
             description: set.description,
             Questions: set.Questions,
+            isPublic: set.isPublic,
         };
     });
     return res.status(200).json(response);
@@ -49,6 +52,7 @@ export async function handleGetSetById(req: Request, res: Response) {
             name: true,
             description: true,
             ownerId: true,
+            isPublic: true,
             Questions: {
                 select: {
                     id: true,
@@ -68,17 +72,50 @@ export async function handleGetSetById(req: Request, res: Response) {
         }
     });
 
-    if (!set || set.ownerId !== req.user!.id) {
-        return res.status(404).json({
-            error: true,
-            message: "Set not found"
-        });
+    if (!set) {
+        // If the set doesn't exist, return 404
+        const response: getSetByIdResponse = {
+            success: false,
+            message: "Set not found",
+            id: -1,
+            name: "",
+            description: "",
+            isPublic: false,
+            Questions: [],
+        };
+        return res.status(404).json(response);
+    } else if (!req.user && !set.isPublic) {
+        // If the set is not public and the user is not logged in, return 401
+        const response: getSetByIdResponse = {
+            success: false,
+            message: "Unauthorized",
+            id: -1,
+            name: "",
+            description: "",
+            isPublic: false,
+            Questions: [],
+        };
+        return res.status(401).json(response);
+    } else if (req.user && req.user.id !== set.ownerId && !set.isPublic) {
+        // If the user is not the owner of the set and the set is not public
+        const response: getSetByIdResponse = {
+            success: false,
+            message: "Unauthorized",
+            id: -1,
+            name: "",
+            description: "",
+            isPublic: false,
+            Questions: [],
+        };
+        return res.status(401).json(response);
     }
 
     const response: getSetByIdResponse = {
+        success: true,
         id: set.id,
         name: set.name,
         description: set.description,
+        isPublic: set.isPublic,
         Questions: set.Questions,
     };
     return res.status(200).json(response);

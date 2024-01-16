@@ -130,4 +130,65 @@ describe("Sets CRUD should work", () => {
         });
     });
 
+    it("Should create a public set and retrieve it without auth if it is public", async () => {
+        const login = await axios.post("http://localhost:3000/api/auth/login", {
+            username: "test",
+            password: "test",
+        });
+    
+        const token = login.data.token;
+    
+        let id = -1;
+        await axios.post("http://localhost:3000/api/sets", {
+            name: "publicTest",
+            description: "publicTest",
+            isPublic: true
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((res) => {
+            expect(res.status).toEqual(200);
+            expect(res.data.success).toEqual(true);
+            expect(res.data.id).toBeGreaterThan(0);
+            id = res.data.id;
+        });
+    
+        await axios.get(`http://localhost:3000/api/sets/${id}`).then((res) => {
+            expect(res.status).toEqual(200);
+            expect(res.data.id).toEqual(id);
+            expect(res.data.name).toEqual("publicTest");
+            expect(res.data.description).toEqual("publicTest");
+            expect(res.data.isPublic).toEqual(true);
+        });
+    });    
+
+    it("Should not retrieve a set if it is not public and not owned by the user", async () => {
+        const login = await axios.post("http://localhost:3000/api/auth/login", {
+            username: "test",
+            password: "test",
+        });
+    
+        const token = login.data.token;
+    
+        let id = -1;
+        await axios.post("http://localhost:3000/api/sets", {
+            name: "privateTest",
+            description: "privateTest",
+            isPublic: false
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((res) => {
+            expect(res.status).toEqual(200);
+            expect(res.data.success).toEqual(true);
+            expect(res.data.id).toBeGreaterThan(0);
+            id = res.data.id;
+        });
+    
+        await axios.get(`http://localhost:3000/api/sets/${id}`).catch((err) => {
+            expect(err.response.status).toEqual(401);
+        });
+    });
 });

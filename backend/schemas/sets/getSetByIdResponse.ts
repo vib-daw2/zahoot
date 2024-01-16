@@ -1,6 +1,8 @@
 import {z} from 'zod';
 
 export const getSetByIdResponseSchema = z.object({
+    success: z.boolean(),
+    message: z.string().optional(),
     id: z.number(),
     name: z.string(),
     description: z.string(),
@@ -12,7 +14,8 @@ export const getSetByIdResponseSchema = z.object({
             choice: z.string(),
             isCorrect: z.boolean(),
         })),
-    }))
+    })),
+    isPublic: z.boolean(),
 });
 
 export type getSetByIdResponse = z.infer<typeof getSetByIdResponseSchema>;
