@@ -1,5 +1,7 @@
 import axios from "axios";
 import getDb from "../prisma/db";
+import { getSetByIdResponseSchema } from "../schemas/sets/getSetByIdResponse";
+import { getMySetsResponseSchema } from "../schemas/sets/getMySetsResponse";
 
 describe("Sets CRUD should work", () => {
 
@@ -21,7 +23,7 @@ describe("Sets CRUD should work", () => {
         })
     });
 
-    it("Should create a set", async () => {
+    it("Should create a set and retrieve its info", async () => {
         const login = await axios.post("http://localhost:3000/api/auth/login", {
             username: "test",
             password: "test",
@@ -29,6 +31,7 @@ describe("Sets CRUD should work", () => {
 
         const token = login.data.token;
 
+        let id = -1;
         await axios.post("http://localhost:3000/api/sets", {
             name: "test",
             description: "test",
@@ -39,6 +42,33 @@ describe("Sets CRUD should work", () => {
         }).then((res) => {
             expect(res.status).toEqual(200);
             expect(res.data.success).toEqual(true);
+            expect(res.data.id).toBeGreaterThan(0);
+            id = res.data.id;
+        });
+
+        await axios.get(`http://localhost:3000/api/sets/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((res) => {
+            expect(res.status).toEqual(200);
+            expect(res.data.id).toEqual(id);
+            expect(res.data.name).toEqual("test");
+            expect(res.data.description).toEqual("test");
+            expect(getSetByIdResponseSchema.safeParse(res.data).success).toEqual(true);
+        });
+
+        await axios.get(`http://localhost:3000/api/sets/mine`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((res) => {
+            expect(res.status).toEqual(200);
+            expect(res.data.length).toEqual(1);
+            expect(res.data[0].id).toEqual(id);
+            expect(res.data[0].name).toEqual("test");
+            expect(res.data[0].description).toEqual("test");
+            expect(getMySetsResponseSchema.safeParse(res.data).success).toEqual(true);
         });
     });
 

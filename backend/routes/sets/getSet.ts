@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import getDb from "../../prisma/db";
+import { getSetByIdResponse } from "../../schemas/sets/getSetByIdResponse";
 
 export async function handleGetMySets(req: Request, res: Response) {
     const db = await getDb();
@@ -21,7 +22,15 @@ export async function handleGetMySets(req: Request, res: Response) {
         }
     });
 
-    return res.status(200).json(sets);
+    const response: getSetByIdResponse[] = sets.map((set) => {
+        return {
+            id: set.id,
+            name: set.name,
+            description: set.description,
+            Questions: set.Questions,
+        };
+    });
+    return res.status(200).json(response);
 }
 
 export async function handleGetSetById(req: Request, res: Response) {
@@ -59,5 +68,11 @@ export async function handleGetSetById(req: Request, res: Response) {
         });
     }
 
-    return res.status(200).json(set);
+    const response: getSetByIdResponse = {
+        id: set.id,
+        name: set.name,
+        description: set.description,
+        Questions: set.Questions,
+    };
+    return res.status(200).json(response);
 }
