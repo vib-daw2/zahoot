@@ -24,6 +24,8 @@ services:
       - "3000:3000"
     networks:
       - zahoot-network
+    depends_on:
+      - db
 volumes:
   zahoot_data:
 networks:
