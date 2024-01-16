@@ -6,6 +6,8 @@ import {
   createRoutesFromElements,
   Route,
   RouterProvider,
+  Routes,
+  useLocation,
 } from "react-router-dom";
 import RootLayout from './layouts/root-layout';
 import HomeLayout from './layouts/home-layout';
@@ -13,6 +15,10 @@ import Home from './home/home';
 import Participants from './test/participants';
 import Question from './test/question';
 import Create from './questions/create';
+import Login from './auth/login';
+import Signup from './auth/signup';
+import LoginLayout from './layouts/login-layout';
+import { AnimatePresence } from 'framer-motion';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,8 +26,12 @@ const router = createBrowserRouter(
       <Route element={<HomeLayout />}>
         <Route path='/' element={<Home />} />
         <Route path="/:id/participants" element={<Participants />} />
-        <Route path="/:id/questions/:num" element={<Question />} />
+        <Route path="/:id/test" element={<Question />} />
         <Route path='/create' element={<Create />} />
+        <Route element={<LoginLayout />}>
+          <Route path='/login' element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Route>
       </Route>
     </Route>
   )
@@ -29,6 +39,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AnimatePresence mode='wait'>
+      <RouterProvider router={router} />
+    </AnimatePresence>
   </React.StrictMode>,
 )

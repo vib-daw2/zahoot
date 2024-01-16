@@ -27,6 +27,8 @@ const item = {
 export default function Home({ }: Props) {
     return (
         <div className='w-full h-screen flex flex-col justify-center items-center'>
+            <div className='-z-10 min-w-[75vh] min-h-[75vh] bg-black fixed -top-[15vh] -left-[15vh] rotate-45 opacity-10'></div>
+            <div className='-z-10 min-w-[75vh] min-h-[75vh] bg-black fixed -right-[15vh] -bottom-[15vh] rotate-45 opacity-10 rounded-full'></div>
             <div className='text-6xl mb-8 mt-2 font-bold font-zahoot text-black'>Zahoot!</div>
             <motion.div variants={container} initial="hidden" animate="visible" className='w-fit border border-gray-200 drop-shadow-lg h-fit py-4 px-4 bg-white flex flex-col justify-center items-center gap-3 rounded-md min-w-80 min-h-24'>
                 <motion.input variants={item} type="text" placeholder='Game PIN' className='px-6 bg-slate-100 placeholder:font-bold text-center w-full py-3 border-2 border-gray-300 rounded-sm' />

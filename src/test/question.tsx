@@ -1,7 +1,7 @@
 import { containerMotion, itemMotion } from '@/utils/motion'
 import { AnimatePresence, motion, useAnimate } from 'framer-motion'
 import { CheckIcon, XIcon } from 'lucide-react'
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import { useParams } from 'react-router'
 
 type Props = {
@@ -51,14 +51,20 @@ const SolutionItem = ({ text, position, isCorrect, setSolution, solution }: Solu
 
 }
 
-export default function Question({ }: Props) {
-    const { id, num } = useParams()
+function Question({ num, solution, setSolution }: { num: number, solution: number, setSolution: Dispatch<SetStateAction<number>> }) {
+    console.log("reloading")
+    const { id } = useParams()
     const solutions = ['Respuesta A', 'Respuesta B', 'Respuesta C', 'Respuesta D']
     const correctSolution = 2
-    const [solution, setSolution] = React.useState<number>(-1)
+    // const [solution, setSolution] = React.useState<number>(-1)
 
     return (
-        <div className='w-2/3 h-screen mx-auto flex flex-col justify-center items-center'>
+        <motion.div
+            initial={{ scale: 0.5, opacity: 1 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ ease: "easeInOut" }}
+            className='w-2/3 h-screen mx-auto flex flex-col justify-center items-center'>
             <div className='text-2xl font-bold text-center'>Question {num}</div>
             <div className='text-4xl'>¿Cuál es la solución?</div>
             <div className='w-full h-72 rounded-lg bg-slate-600 mt-4 z-50'></div>
@@ -75,6 +81,41 @@ export default function Question({ }: Props) {
                         />))}
                 </AnimatePresence>
             </motion.div>
-        </div>
+        </motion.div>
     )
+}
+
+export default function Exam() {
+    const [solution, setSolution] = React.useState(-1)
+    const [questionNumber, setQuestionNumber] = React.useState(1)
+    const [isLoading, setIsLoading] = React.useState(false);
+
+    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+    function animateBar() {
+
+    }
+
+    React.useEffect(() => {
+        async function nextQuestion() {
+            await delay(2000)
+            setIsLoading(true)
+            await delay(500)
+            if (solution != -1) {
+                setQuestionNumber(i => i + 1)
+                setSolution(-1)
+                setIsLoading(false)
+            }
+        }
+        if (solution != -1) {
+            nextQuestion()
+        }
+    }, [solution]);
+
+    return (
+        <AnimatePresence mode='wait'>
+            {!isLoading && <Question num={questionNumber} solution={solution} setSolution={setSolution} />}
+        </AnimatePresence>
+    )
+
 }

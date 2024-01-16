@@ -36,19 +36,27 @@ const NavbarItem = ({ text }: { text: string }) => {
 export default function Navbar({ }: Props) {
     const links = ['Join', 'Create', 'About', 'Log In']
     return (
-        <div className='fixed top-3 left-0 w-full flex justify-center items-center z-40'>
-            <motion.div
-                variants={container}
-                initial="hidden"
-                animate="visible"
-                className='absolute left-8 top-2 text-black text-4xl font-bold font-zahoot'>Zahoot!</motion.div>
-            <motion.div
-                variants={container}
-                initial="hidden"
-                animate="visible"
-                className='w-fit min-w-1/2 flex justify-between bg-yellow-50 drop-shadow-lg bg-opacity-90 border-gray-200 border rounded-full'>
-                {links.map((link, i) => <NavbarItem key={i} text={link} />)}
-            </motion.div>
-        </div>
+        <>
+            <div className='fixed top-3 left-0 w-full flex justify-center items-center z-40'>
+                <motion.div
+                    variants={container}
+                    initial="hidden"
+                    animate="visible"
+                    className='absolute left-8 top-2 text-black text-4xl font-bold font-zahoot'>Zahoot!</motion.div>
+                <motion.div
+                    variants={container}
+                    initial="hidden"
+                    animate="visible"
+                    className='w-fit min-w-1/2 flex justify-between bg-yellow-50 drop-shadow-lg bg-opacity-90 border-gray-200 border rounded-full'>
+                    {links.map((link, i) => <NavbarItem key={i} text={link} />)}
+                </motion.div>
+            </div>
+            <div className='fixed top-3 right-8 bg-yellow-50 drop-shadow-lg w-fit pr-4 h-10 py-2 border rounded-full flex flex-row items-center justify-start gap-2'>
+                <div className='flex justify-center items-center bg-slate-900 rounded-full text-white w-8 h-8'>C</div>
+                <div className='text-xs'>
+                    <div>@nsadjkasd</div>
+                </div>
+            </div>
+        </>
     )
 }
