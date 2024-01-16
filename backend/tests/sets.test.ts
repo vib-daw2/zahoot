@@ -96,4 +96,38 @@ describe("Sets CRUD should work", () => {
             expect(err.response.status).toEqual(400);
         });
     });
+
+    it("Should return 404 if trying to retrieve a set that doesn't exist", async () => {
+        const login = await axios.post("http://localhost:3000/api/auth/login", {
+            username: "test",
+            password: "test",
+        });
+
+        const token = login.data.token;
+
+        const db = await getDb();
+
+        let notExists = true;
+        let id = -1;
+        while (!notExists) {
+            id = Math.floor(Math.random() * 1000000);
+            const set = await db.questionSet.findUnique({
+                where: {
+                    id: id
+                }
+            });
+            if (!set) {
+                notExists = false;
+            }
+        }
+
+        await axios.get(`http://localhost:3000/api/sets/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).catch((err) => {
+            expect(err.response.status).toEqual(404);
+        });
+    });
+
 });
