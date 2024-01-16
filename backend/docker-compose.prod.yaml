@@ -22,21 +22,7 @@ services:
       JWT_SECRET: ${JWT_PROD_SECRET}
     ports:
       - "3000:3000"
-  minio:
-    image: minio/minio
-    restart: always
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
-    entrypoint: sh -c "minio server /data"
-    ports:
-      - "9000:9000"
-    volumes:
-      - zahoot_images:/data
-    networks:
-      - zahoot-network
 volumes:
   zahoot_data:
-  zahoot_images:
 networks:
   zahoot-network:
