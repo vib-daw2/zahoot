@@ -53,6 +53,13 @@ export async function handleGetSetById(req: Request, res: Response) {
                 select: {
                     id: true,
                     question: true,
+                    choices: {
+                        select: {
+                            id: true,
+                            choice: true,
+                            isCorrect: true,
+                        }
+                    },
                 }
             }
         },

@@ -7,6 +7,11 @@ export const getSetByIdResponseSchema = z.object({
     Questions: z.array(z.object({
         id: z.number(),
         question: z.string(),
+        choices: z.array(z.object({
+            id: z.number(),
+            choice: z.string(),
+            isCorrect: z.boolean(),
+        })),
     }))
 });
 
