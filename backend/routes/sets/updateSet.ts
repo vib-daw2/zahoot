@@ -39,6 +39,7 @@ export async function handleUpdateQuestionSet(req: Request, res: Response) {
         data: {
             name: validated.data.name ?? original!.name,
             description: validated.data.description ?? original!.description,
+            isPublic: validated.data.isPublic ?? original!.isPublic,
         }
     });
 

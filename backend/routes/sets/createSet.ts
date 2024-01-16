@@ -22,7 +22,8 @@ export async function handleCreateQuestionSet(req: Request, res: Response) {
         data: {
             name: validated.data.name,
             ownerId: req.user!.id,
-            description: validated.data.description
+            description: validated.data.description,
+            isPublic: validated.data.isPublic || false,
         }
     });
 
