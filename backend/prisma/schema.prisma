@@ -40,12 +40,12 @@ model Question {
   set       QuestionSet  @relation(fields: [setId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   setId     Int
   type      QuestionType
-  choices   Choice[]
   timeLimit Int          @default(60)
+  choices   Choice[]
 }
 
 enum QuestionType {
-  multipleChoice
+  multipleAnswer
   trueFalse
 }
 
