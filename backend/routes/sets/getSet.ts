@@ -5,6 +5,17 @@ export async function handleGetMySets(req: Request, res: Response) {
     const db = await getDb();
 
     const sets = await db.questionSet.findMany({
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            Questions: {
+                select: {
+                    id: true,
+                    question: true,
+                }
+            }
+        },
         where: {
             ownerId: req.user!.id,
         }
@@ -24,10 +35,20 @@ export async function handleGetSetById(req: Request, res: Response) {
     }
 
     const set = await db.questionSet.findUnique({
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            ownerId: true,
+            Questions: {
+                select: {
+                    id: true,
+                    question: true,
+                }
+            }
+        },
         where: {
             id: parseInt(req.params.id)
-        }, include: {
-            Questions: true
         }
     });
 

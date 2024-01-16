@@ -22,13 +22,14 @@ model User {
 }
 
 model QuestionSet {
-  id        Int        @id @default(autoincrement())
-  name      String
-  owner     User       @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  ownerId   Int
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Questions Question[]
+  id          Int        @id @default(autoincrement())
+  name        String
+  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId     Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Questions   Question[]
+  description String     @default("")
 }
 
 model Question {

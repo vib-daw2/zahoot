@@ -30,7 +30,8 @@ describe("Sets CRUD should work", () => {
         const token = login.data.token;
 
         await axios.post("http://localhost:3000/api/sets", {
-            name: "test"
+            name: "test",
+            description: "test",
         }, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -38,8 +39,6 @@ describe("Sets CRUD should work", () => {
         }).then((res) => {
             expect(res.status).toEqual(200);
             expect(res.data.success).toEqual(true);
-        }).catch((err) => {
-            return err;
         });
     });
 
