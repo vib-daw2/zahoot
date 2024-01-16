@@ -22,29 +22,31 @@ model User {
 }
 
 model QuestionSet {
-  id        Int        @id @default(autoincrement())
-  name      String
-  owner     User       @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  ownerId   Int
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Questions Question[]
+  id          Int        @id @default(autoincrement())
+  name        String
+  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId     Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  isPublic    Boolean    @default(false)
+  Questions   Question[]
+  description String     @default("")
 }
 
 model Question {
   id        Int          @id @default(autoincrement())
   question  String
-  answer    String
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   set       QuestionSet  @relation(fields: [setId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   setId     Int
   type      QuestionType
+  timeLimit Int          @default(60)
   choices   Choice[]
 }
 
 enum QuestionType {
-  multipleChoice
+  multipleAnswer
   trueFalse
 }
 
@@ -55,4 +57,5 @@ model Choice {
   updatedAt  DateTime @updatedAt
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   questionId Int
+  isCorrect  Boolean  @default(false)
 }

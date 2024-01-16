@@ -1,16 +1,39 @@
 import { Request, Response } from "express";
 import getDb from "../../prisma/db";
+import { getSetByIdResponse } from "../../schemas/sets/getSetByIdResponse";
 
 export async function handleGetMySets(req: Request, res: Response) {
     const db = await getDb();
 
     const sets = await db.questionSet.findMany({
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            isPublic: true,
+            Questions: {
+                select: {
+                    id: true,
+                    question: true,
+                }
+            }
+        },
         where: {
             ownerId: req.user!.id,
         }
     });
 
-    return res.status(200).json(sets);
+    const response: getSetByIdResponse[] = sets.map((set: any) => {
+        return {
+            success: true,
+            id: set.id,
+            name: set.name,
+            description: set.description,
+            Questions: set.Questions,
+            isPublic: set.isPublic,
+        };
+    });
+    return res.status(200).json(response);
 }
 
 export async function handleGetSetById(req: Request, res: Response) {
@@ -24,19 +47,76 @@ export async function handleGetSetById(req: Request, res: Response) {
     }
 
     const set = await db.questionSet.findUnique({
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            ownerId: true,
+            isPublic: true,
+            Questions: {
+                select: {
+                    id: true,
+                    question: true,
+                    choices: {
+                        select: {
+                            id: true,
+                            choice: true,
+                            isCorrect: true,
+                        }
+                    },
+                }
+            }
+        },
         where: {
             id: parseInt(req.params.id)
-        }, include: {
-            Questions: true
         }
     });
 
-    if (!set || set.ownerId !== req.user!.id) {
-        return res.status(404).json({
-            error: true,
-            message: "Set not found"
-        });
+    if (!set) {
+        // If the set doesn't exist, return 404
+        const response: getSetByIdResponse = {
+            success: false,
+            message: "Set not found",
+            id: -1,
+            name: "",
+            description: "",
+            isPublic: false,
+            Questions: [],
+        };
+        return res.status(404).json(response);
+    } else if (!req.user && !set.isPublic) {
+        // If the set is not public and the user is not logged in, return 401
+        const response: getSetByIdResponse = {
+            success: false,
+            message: "Unauthorized",
+            id: -1,
+            name: "",
+            description: "",
+            isPublic: false,
+            Questions: [],
+        };
+        return res.status(401).json(response);
+    } else if (req.user && req.user.id !== set.ownerId && !set.isPublic) {
+        // If the user is not the owner of the set and the set is not public
+        const response: getSetByIdResponse = {
+            success: false,
+            message: "Unauthorized",
+            id: -1,
+            name: "",
+            description: "",
+            isPublic: false,
+            Questions: [],
+        };
+        return res.status(401).json(response);
     }
 
-    return res.status(200).json(set);
+    const response: getSetByIdResponse = {
+        success: true,
+        id: set.id,
+        name: set.name,
+        description: set.description,
+        isPublic: set.isPublic,
+        Questions: set.Questions,
+    };
+    return res.status(200).json(response);
 }

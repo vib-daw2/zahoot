@@ -21,7 +21,9 @@ export async function handleCreateQuestionSet(req: Request, res: Response) {
     const set = await db.questionSet.create({
         data: {
             name: validated.data.name,
-            ownerId: req.user!.id
+            ownerId: req.user!.id,
+            description: validated.data.description,
+            isPublic: validated.data.isPublic || false,
         }
     });
 
