@@ -22,6 +22,8 @@ services:
       JWT_SECRET: ${JWT_PROD_SECRET}
     ports:
       - "3000:3000"
+    networks:
+      - zahoot-network
 volumes:
   zahoot_data:
 networks:
