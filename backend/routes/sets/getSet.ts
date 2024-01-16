@@ -22,7 +22,7 @@ export async function handleGetMySets(req: Request, res: Response) {
         }
     });
 
-    const response: getSetByIdResponse[] = sets.map((set) => {
+    const response: getSetByIdResponse[] = sets.map((set: any) => {
         return {
             id: set.id,
             name: set.name,
