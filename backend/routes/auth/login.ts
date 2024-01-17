@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { loginRequestSchema } from "../../schemas/auth/loginRequest";
+import { loginRequestSchema } from "../../types/routes/auth/loginRequest";
 import getDb from "../../prisma/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { jwtPayload } from "../../types/jwtPayload";
-import { loginResponse } from "../../schemas/auth/loginResponse";
+import { loginResponse } from "../../types/routes/auth/loginResponse";
 
 export default async function handleLogin(req: Request, res: Response) {
     const validated = loginRequestSchema.safeParse(req.body);

@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import getDb from "../../prisma/db";
-import { deleteSetResponse } from "../../schemas/sets/deleteSetResponse";
+import { deleteSetResponse } from "../../types/routes/sets/deleteSetResponse";
 
 export async function handleDeleteQuestionSet(req: Request, res: Response) {
     const db = await getDb();

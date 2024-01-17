@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import getDb from '../../prisma/db';
-import { createQuestionsRequestSchema } from '../../schemas/questions/createQuestionsRequest';
-import { createQuestionsResponse } from '../../schemas/questions/createQuestionsResponse';
+import { createQuestionsRequestSchema } from '../../types/routes/questions/createQuestionsRequest';
+import { createQuestionsResponse } from '../../types/routes/questions/createQuestionsResponse';
 import { TypeOf } from 'zod';
 import { PrismaClient } from '@prisma/client';
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import getDb from "../../prisma/db";
-import { getSetByIdResponse } from "../../schemas/sets/getSetByIdResponse";
+import { getSetByIdResponse } from "../../types/routes/sets/getSetByIdResponse";
 
 export async function handleGetMySets(req: Request, res: Response) {
     const db = await getDb();

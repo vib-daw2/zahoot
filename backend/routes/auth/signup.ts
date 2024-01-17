@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { signupRequestSchema } from '../../schemas/auth/signupRequest';
+import { signupRequestSchema } from '../../types/routes/auth/signupRequest';
 import getDb from '../../prisma/db';
 import bcrypt from 'bcrypt';
-import { signupResponse } from '../../schemas/auth/signupResponse';
+import { signupResponse } from '../../types/routes/auth/signupResponse';
 
 export default async function handleSignup(req: Request, res: Response) {
 
