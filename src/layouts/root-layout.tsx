@@ -5,7 +5,7 @@ type Props = {}
 
 export default function RootLayout({ }: Props) {
     return (
-        <div className='bg-yellow-50 h-screen absolute inset-0 z-0'>
+        <div className=''>
 
             <Outlet />
         </div>
