@@ -1,7 +1,7 @@
 import axios from "axios";
 import getDb from "../prisma/db";
-import { getSetByIdResponseSchema } from "../schemas/sets/getSetByIdResponse";
-import { getMySetsResponseSchema } from "../schemas/sets/getMySetsResponse";
+import { getSetByIdResponseSchema } from "../types/routes/sets/getSetByIdResponse";
+import { getMySetsResponseSchema } from "../types/routes/sets/getMySetsResponse";
 
 describe("Sets CRUD should work", () => {
 
