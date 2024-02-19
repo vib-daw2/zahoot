@@ -29,7 +29,7 @@ const NavbarItem = ({ text, href }: { text: string, href: string }) => {
         <Link to={href}>
             <motion.div
                 variants={item}
-                className='px-8 min-w-32 text-center  py-2'>
+                className='px-8 min-w-32 text-center py-2 hover:border-b-2 border-b-cyan-400 hover:text-cyan-400 hover:font-semibold'>
                 {text}
             </motion.div>
         </Link>
@@ -51,8 +51,8 @@ export default function Navbar({ }: Props) {
             href: '/about'
         },
         {
-            text: 'Log In',
-            href: '/login'
+            text: 'Test Sets',
+            href: '/sets'
         }
     ]
     return (
@@ -63,7 +63,7 @@ export default function Navbar({ }: Props) {
                     variants={container}
                     initial="hidden"
                     animate="visible"
-                    className='flex-1 flex justify-center items-center'>
+                    className='flex-1 flex justify-center items-center '>
                     {links.map((link, i) => <NavbarItem key={i} {...link} />)}
                 </motion.div>
                 <div className='flex-1 flex justify-end items-center'>

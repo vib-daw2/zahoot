@@ -20,10 +20,10 @@ export default {
       },
       fontFamily: {
         main: ["Montserrat", "sans-serif"],
-        zahoot: ["Marhey", "Montserrat", "sans-serif"]
+        zahoot: ["Kode Mono", "Montserrat", "sans-serif"]
       }
     },
   },
-  plugins: [],
+  plugins: [require('@headlessui/react')],
 }
 

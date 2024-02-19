@@ -1,92 +1,47 @@
-import { Input, itemMotion } from '@/components/auth-input'
-import { MotionProps, motion } from 'framer-motion'
-import { AtSignIcon, LockIcon, LockKeyholeIcon, MailIcon, UserRoundIcon } from 'lucide-react'
-import React, { RefAttributes } from 'react'
+import { Input } from '@/components/auth-input'
+import { motion } from 'framer-motion'
+import { AtSignIcon, LockIcon, MailIcon } from 'lucide-react'
+import React from 'react'
+import { useCookies } from 'react-cookie'
 import { Link } from 'react-router-dom'
 
 type Props = {}
 
-
-
-type MotionInput = MotionProps & {
-    type?: string
-    placeholder?: string
-    className?: string
-    value?: string
-    onValueChange?: (v: string) => void
-}
-
-
-
 export default function Signup({ }: Props) {
-
+    const [cookies, setCookies] = useCookies(['token'])
+    const itemMotion = {
+        initial: { translateX: 400, opacity: 0 },
+        animate: { translateX: 0, opacity: 1 },
+        exit: { translateX: -400, opacity: 0 },
+        transition: { delay: 0.3, duration: 0.5 }
+    }
+    React.useEffect(() => {
+        console.log(cookies)
+    }, [cookies])
     return (
-        <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            transition={{ ease: "easeInOut" }}
-
-            className='max-w-[350px] w-full border border-gray-200 drop-shadow-lg space-y-4 h-fit p-4 bg-white flex flex-col justify-center items-center rounded-lg'>
-            <div className=' text-2xl text-left w-full'>Log In</div>
-            <motion.div {...itemMotion} transition={{ delay: .1 }} className='relative w-full'>
-                <div className='h-full absolute z-50 top-0 left-0 w-12 flex justify-center items-center'>
-                    <UserRoundIcon size={24} className='text-gray-400' />
-                </div>
-                <Input
-
-                    placeholder='name'
-                />
-            </motion.div>
-            <motion.div {...itemMotion} transition={{ delay: .2 }} className='relative w-full'>
-                <div className='h-full absolute z-50 top-0 left-0 w-12 flex justify-center items-center'>
-                    <AtSignIcon size={24} className='text-gray-400' />
-                </div>
-                <Input
-                    placeholder='username'
-                />
-            </motion.div>
-            <motion.div {...itemMotion} transition={{ delay: .3 }} className='relative w-full'>
-                <div className='h-full absolute z-50 top-0 left-0 w-12 flex justify-center items-center'>
-                    <MailIcon size={24} className='text-gray-400' />
-                </div>
-                <Input
-
-                    placeholder='email'
-                    type='email'
-                />
-            </motion.div>
-            <motion.div {...itemMotion} transition={{ delay: .4 }} className='relative w-full'>
-                <div className='h-full absolute z-50 top-0 left-0 w-12 flex justify-center items-center'>
-                    <LockIcon size={24} className='text-gray-400' />
-                </div>
-                <Input
-
-                    placeholder='password'
-                    type='password'
-                />
-            </motion.div>
-            <motion.div {...itemMotion} transition={{ delay: .5 }} className='relative w-full'>
-                <div className='h-full absolute z-50 top-0 left-0 w-12 flex justify-center items-center'>
-                    <LockKeyholeIcon size={24} className='text-gray-400' />
-                </div>
-                <Input
-
-                    placeholder='repeat password'
-                    type='password'
-                />
-            </motion.div>
-
-            <motion.button
-                {...itemMotion}
-                transition={{ delay: .6 }}
-                className='px-6 py-3 bg-gray-900 text-white text-lg font-semibold rounded-sm w-full'>Sign Up</motion.button>
-            <motion.div
-                {...itemMotion}
-                transition={{ delay: .7 }}
-            >
-                <Link to={"/login"}>Log In</Link>
-            </motion.div>
-        </motion.div>
+        <div className='max-w-md w-full border border-slate-800 flex justify-center items-center flex-col gap-y-8 rounded-md p-4 py-6 bg-slate-900/70'>
+            <div className='relative mx-auto w-full'>
+                <AtSignIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
+                <input type="text" className='pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b-slate-200 border-b focus:outline-none text-white' placeholder='username' />
+            </div>
+            <div className='relative mx-auto w-full'>
+                <MailIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
+                <input type="text" className='pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b-slate-200 border-b focus:outline-none text-white' placeholder='username' />
+            </div>
+            <div className='relative mx-auto w-full'>
+                <LockIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
+                <input type="password" className='pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b-slate-200 border-b focus:outline-none text-white' placeholder='password' />
+            </div>
+            <div className='relative mx-auto w-full'>
+                <LockIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
+                <input type="password" className='pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b-slate-200 border-b focus:outline-none text-white' placeholder='repeat' />
+            </div>
+            <div className='flex flex-col gap-3 w-full'>
+                <button className='w-full bg-white hover:bg-slate-200 text-black font-zahoot uppercase font-bold tracking-widest py-2 rounded-md'>
+                    Sign Up
+                </button>
+                <Link to='/login' className='text-white text-center hover:underline text-sm font-zahoot'>Log In</Link>
+            </div>
+        </div>
     )
 }

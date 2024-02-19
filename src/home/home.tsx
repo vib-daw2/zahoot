@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion'
+import { ArrowRightIcon } from 'lucide-react';
 import React from 'react'
+import { Link, redirect, useNavigate } from 'react-router-dom';
 
 type Props = {}
 
@@ -25,15 +27,36 @@ const item = {
 
 
 export default function Home({ }: Props) {
+    const [pin, setPin] = React.useState('')
+    const navigate = useNavigate()
+    const validateOnInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (isNaN(parseInt(e.target.value.charAt(e.target.value.length - 1)))) {
+            e.target.value = e.target.value.slice(0, e.target.value.length - 1)
+        }
+        if (e.target.value.length > 5) {
+            e.target.value = e.target.value.slice(0, 5)
+        }
+        return e.target.value
+    }
+
+    function goNext() {
+        console.log('goNext')
+        navigate(`/${pin}/participants`)
+    }
+
     return (
         <div className='w-full h-screen flex flex-col justify-center items-center'>
             <motion.div initial={{ scale: 0.2 }} animate={{ scale: 1 }} className='text-6xl mb-8 mt-2 font-bold font-zahoot text-white'>Zahoot!</motion.div>
-            <motion.div variants={container} initial="hidden" animate="visible" className='w-fit border border-gray-200 drop-shadow-lg h-fit py-4 px-4 bg-white flex flex-col justify-center items-center gap-3 rounded-md min-w-80 min-h-24'>
-                <motion.input variants={item} type="text" placeholder='Game PIN' className='px-6 bg-slate-100 placeholder:font-bold text-center w-full py-3 border-2 border-gray-300 rounded-sm' />
-                <motion.button variants={item} className='px-6 py-3 bg-gray-900 text-white text-lg font-semibold rounded-sm w-full'>Join</motion.button>
-            </motion.div>
+            <div className='w-full flex justify-center items-center'>
+                <div className='w-full max-w-md flex justify-center items-center relative'>
+                    <input value={pin} onChange={e => setPin(validateOnInput(e))} maxLength={5} type="text" placeholder='PIN' className='border-b border-b-white bg-transparent text-white font-zahoot text-lg text-center py-2 focus:outline-none w-full max-w-md mx-auto' />
+                    {pin.length == 5 && <button onClick={goNext} className='text-white absolute right-0 cursor-pointer flex justify-center items-center rounded-md hover:bg-slate-500/50'>
+                        <ArrowRightIcon size={32} className='' />
+                    </button>}
+                </div>
+            </div>
             <div className='absolute bottom-2 left-0 w-full flex justify-center items-center'>
-                <div className=' hover:underline'>Create your own zahoot! <span className='font-bold'>here</span></div>
+                <Link to={'/create'} className=' hover:underline text-white'>Create your own zahoot! <span className='font-bold'>here</span></Link>
             </div>
         </div >
     )

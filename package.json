@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "module": "esnext",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "cors": "^2.8.5",
+    "@headlessui/react": "^1.7.18",
     "framer-motion": "^10.18.0",
     "ldrs": "^1.0.1",
     "localforage": "^1.10.0",
@@ -18,9 +19,10 @@
     "match-sorter": "^6.3.1",
     "million": "^2.6.4",
     "react": "^18.2.0",
+    "react-cookie": "^7.0.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.2",
-    "sort-by": "^1.2.0"
+    "sort-by": "^0.0.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
