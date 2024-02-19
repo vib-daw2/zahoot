@@ -4,6 +4,7 @@ import generalRouter from "./routes/general/router";
 import authRouter from "./routes/auth/router";
 import setsRouter from "./routes/sets/router";
 import questionsRouter from "./routes/questions/router";
+import cors from "cors";
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ if (!process.env.JWT_SECRET) {
 } 
 
 const app = express();
+app.use(cors()); // Add cors middleware
+
 
 app.use(express.json());
 
