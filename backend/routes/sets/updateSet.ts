@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
-import { updateSetResponse } from "../../schemas/sets/updateSetResponse";
+import { updateSetResponse } from "../../types/routes/sets/updateSetResponse";
 import getDb from "../../prisma/db";
-import { updateSetRequestSchema } from "../../schemas/sets/updateSetRequest";
+import { updateSetRequestSchema } from "../../types/routes/sets/updateSetRequest";
 
 export async function handleUpdateQuestionSet(req: Request, res: Response) {
     const db = await getDb();

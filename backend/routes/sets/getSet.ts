@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import getDb from "../../prisma/db";
-import { getSetByIdResponse } from "../../schemas/sets/getSetByIdResponse";
+import { getSetByIdResponse } from "../../types/routes/sets/getSetByIdResponse";
 
 export async function handleGetMySets(req: Request, res: Response) {
     const db = await getDb();
@@ -118,5 +118,39 @@ export async function handleGetSetById(req: Request, res: Response) {
         isPublic: set.isPublic,
         Questions: set.Questions,
     };
+    return res.status(200).json(response);
+}
+
+export async function handleHomePageSets(_req: Request, res: Response) {
+    const db = await getDb();
+
+    const sets = await db.questionSet.findMany({
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            isPublic: true,
+            Questions: {
+                select: {
+                    id: true,
+                    question: true,
+                }
+            }
+        },
+        where: {
+            isPublic: true,
+        }
+    });
+
+    const response: getSetByIdResponse[] = sets.map((set: any) => {
+        return {
+            success: true,
+            id: set.id,
+            name: set.name,
+            description: set.description,
+            Questions: set.Questions,
+            isPublic: set.isPublic,
+        };
+    });
     return res.status(200).json(response);
 }

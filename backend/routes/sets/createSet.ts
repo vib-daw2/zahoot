@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import getDb from "../../prisma/db";
-import { createSetRequestSchema } from "../../schemas/sets/createSetRequest";
-import { createSetResponse } from "../../schemas/sets/createSetResponse";
+import { createSetRequestSchema } from "../../types/routes/sets/createSetRequest";
+import { createSetResponse } from "../../types/routes/sets/createSetResponse";
 
 export async function handleCreateQuestionSet(req: Request, res: Response) {
     const db = await getDb();
