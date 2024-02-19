@@ -2,17 +2,15 @@ import React from 'react'
 
 type Question = {
     question: string,
-    image: File | null,
     answers: string[]
     solution: number
 }
 
-export default function useQuestion() {
-    const [questions, setQuestions] = React.useState<Question[]>([])
+export default function useQuestion(q: Question[] = []) {
+    const [questions, setQuestions] = React.useState<Question[]>(q)
     const addQuestion = () => {
         setQuestions([...questions, {
             question: '',
-            image: null,
             answers: Array.from({ length: 4 }, () => ''),
             solution: 0
         }])
