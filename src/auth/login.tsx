@@ -1,11 +1,8 @@
-import { Input } from '@/components/auth-input'
-import { motion } from 'framer-motion'
 import { AtSignIcon, LockIcon } from 'lucide-react'
 import React from 'react'
 import { useCookies } from 'react-cookie'
 import { Link } from 'react-router-dom'
 
-type Props = {}
 
 type LoginResponse = {
     error: boolean
@@ -13,14 +10,9 @@ type LoginResponse = {
     token?: string
 }
 
-export default function Login({ }: Props) {
+export default function Login() {
     const [cookies, setCookies] = useCookies()
-    const itemMotion = {
-        initial: { translateX: 400, opacity: 0 },
-        animate: { translateX: 0, opacity: 1 },
-        exit: { translateX: -400, opacity: 0 },
-        transition: { delay: 0.3, duration: 0.5 }
-    }
+
 
     async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
