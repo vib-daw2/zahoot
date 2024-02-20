@@ -6,8 +6,6 @@ import {
   createRoutesFromElements,
   Route,
   RouterProvider,
-  Routes,
-  useLocation,
 } from "react-router-dom";
 import RootLayout from './layouts/root-layout';
 import HomeLayout from './layouts/home-layout';
