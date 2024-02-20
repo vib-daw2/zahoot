@@ -7,7 +7,6 @@ import { jwtPayload } from "../../types/jwtPayload";
 import { loginResponse } from "../../types/routes/auth/loginResponse";
 
 export default async function handleLogin(req: Request, res: Response) {
-    console.log(req.body)
     const validated = loginRequestSchema.safeParse(req.body);
 
     if (!validated.success) {
