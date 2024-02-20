@@ -7,7 +7,6 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginRequestSchema } from "@/utils/schemas/auth"
 
-type Props = {}
 
 type LoginResponse = {
     error: boolean
@@ -16,7 +15,7 @@ type LoginResponse = {
 }
 
 
-export default function Login({ }: Props) {
+export default function Login() {
     const [cookies, setCookies] = useCookies()
     const [error, setError] = React.useState<string | null>(null)
     const { register, formState: { errors }, handleSubmit, watch } = useForm<z.infer<typeof loginRequestSchema>>({
