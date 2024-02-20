@@ -47,6 +47,11 @@ export default async function handleLogin(req: Request, res: Response) {
             error: false,
             message: "User logged in successfully",
             token: jwt.sign(payload, process.env.JWT_SECRET!),
+            data: {
+                name: user.name,
+                username: user.username,
+                email: user.email,
+            },
         };
         return res.status(200).json(response);
     }
