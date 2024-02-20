@@ -2,7 +2,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { AtSignIcon, LockIcon } from 'lucide-react'
 import React from 'react'
 import { useCookies } from 'react-cookie'
-import { Link } from 'react-router-dom'
+import { Link, redirect, useNavigate, useNavigation } from 'react-router-dom'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginRequestSchema } from "@/utils/schemas/auth"
@@ -12,6 +12,11 @@ type LoginResponse = {
     error: boolean
     message: string
     token?: string
+    data?: {
+        email: string;
+        name: string;
+        username: string;
+    }
 }
 
 
@@ -21,6 +26,7 @@ export default function Login() {
     const { register, formState: { errors }, handleSubmit, watch } = useForm<z.infer<typeof loginRequestSchema>>({
         resolver: zodResolver(loginRequestSchema)
     })
+    const navigation = useNavigate()
 
     const onSubmit: SubmitHandler<z.infer<typeof loginRequestSchema>> = async (data) => {
         setError(null)
@@ -38,7 +44,10 @@ export default function Login() {
                 setError(data.message)
             } else {
                 setCookies('accessToken', data.token)
+                localStorage.setItem("ZAHOOT_NAME", data.data?.name ?? "")
+                localStorage.setItem("ZAHOOT_USERNAME", data.data?.username ?? "")
                 console.log(cookies)
+                navigation('/')
             }
         } catch (error) {
             console.error(error)

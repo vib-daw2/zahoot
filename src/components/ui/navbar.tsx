@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom';
+import UserBtn from './user-btn';
 
 type Props = {}
 
@@ -47,11 +48,7 @@ export default function Navbar({ }: Props) {
             href: '/create'
         },
         {
-            text: 'About',
-            href: '/about'
-        },
-        {
-            text: 'Test Sets',
+            text: 'Sets',
             href: '/sets'
         }
     ]
@@ -67,10 +64,7 @@ export default function Navbar({ }: Props) {
                     {links.map((link, i) => <NavbarItem key={i} {...link} />)}
                 </motion.div>
                 <div className='flex-1 flex justify-end items-center'>
-                    <div className='flex justify-center items-center bg-slate-900 rounded-full text-white w-8 h-8'>C</div>
-                    <div className='text-xs'>
-                        <div>@nsadjkasd</div>
-                    </div>
+                    <UserBtn />
                 </div>
             </div>
         </>
