@@ -5,7 +5,7 @@ type Props = {}
 
 export default function RootLayout({ }: Props) {
     return (
-        <div className=''>
+        <div className=' overflow-x-hidden'>
 
             <Outlet />
         </div>

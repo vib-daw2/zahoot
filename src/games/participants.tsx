@@ -1,9 +1,10 @@
 import React from 'react'
 import { CheckCheckIcon, CopyCheckIcon, CopyIcon, PlayIcon, UserRound, XIcon } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue } from 'framer-motion';
 import { containerMotion, itemMotion } from '@/utils/motion';
 import { generateRandomInt, generateRandomString } from '@/utils/random';
 import { useParams } from 'react-router-dom';
+import { FollowerPointerCard } from '@/components/ui/following-pointer';
 
 type Props = {}
 
@@ -34,6 +35,11 @@ export default function Participants({ }: Props) {
     const [participants, setParticipants] = React.useState<string[]>(allParticipants)
     const [copied, setCopied] = React.useState(false)
     const params = useParams()
+    const [currentUser, setCurrentUser] = React.useState('')
+
+    React.useEffect(function GetCurrentUser() {
+        setCurrentUser(localStorage.getItem('ZAHOOT_USERNAME') || 'unknown')
+    }, [localStorage])
 
     React.useEffect(() => {
         const interval = setInterval(() => {
@@ -62,9 +68,8 @@ export default function Participants({ }: Props) {
         setParticipants((prev) => prev.filter((_, i) => i !== index))
     }
 
-
     return (
-        <div className='w-full h-screen flex flex-col justify-center items-center text-white'>
+        <FollowerPointerCard title={`@ ${currentUser}`} className='w-full h-screen flex flex-col justify-center items-center text-white'>
             <motion.div initial={{ scale: 0.2 }} animate={{ scale: 1 }} className='text-6xl mb-6 mt-2 font-bold font-zahoot text-white'>Zahoot!</motion.div>
             <div className='text-2xl bg-cyan-400 font-medium py-2 px-4 min-w-[200px] rounded-md text-black flex justify-between gap-4 items-center'>
                 #{params.id}
@@ -82,6 +87,6 @@ export default function Participants({ }: Props) {
             <motion.div variants={containerMotion} className='flex flex-row justify-center h-96 p-2 overflow-y-auto items-center max-w-6xl flex-wrap gap-6 mt-4'>
                 {participants.map((participant, i) => (<Participant key={i} name={participant} isAdmin={isAdmin} remove={() => removeParticipant(i)} />))}
             </motion.div>
-        </div>
+        </FollowerPointerCard>
     )
 }
