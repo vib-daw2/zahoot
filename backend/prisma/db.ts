@@ -4,7 +4,8 @@ let db: PrismaClient;
 
 export default async function getDb() {
     if (!db) {
-        db = new PrismaClient();
+        db = new PrismaClient({
+        });
     }
     return db;
 }
