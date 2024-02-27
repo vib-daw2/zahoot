@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import joinGame from "./events/joinGame";
+import moveMouse from "./events/mouseMove";
 
 // Este es el fichero encargado de manejar las conexiones y los juegos
 // que hay en marcha
@@ -10,6 +11,22 @@ export default async function handleConnection(socket: Socket) {
     socket.on("joinGame", (data: string) => {
         joinGame(data, socket);
     });
+
+    socket.on("gameStart", (data: string) => {
+        const { gameId }: { gameId: string } = JSON.parse(data);
+        console.log("game started");
+        socket.to(gameId).emit("gameStart", JSON.stringify({ gameId }));
+    })
+
+    socket.on("moveMouse", (data: string) => {
+        moveMouse(data, socket);
+    })
+
+    socket.on("solution", (data: string) => {
+        const response = JSON.parse(data) as { gameId: string, questionId: number, solution: number, userId: number }
+        console.log(response)
+        socket.to(response.gameId).emit("nextQuestion")
+    })
 
     socket.on("disconnect", () => {
         console.log("User disconnected");
