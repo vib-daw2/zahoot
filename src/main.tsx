@@ -20,6 +20,7 @@ import { AnimatePresence } from 'framer-motion';
 import Sets from './test-sets/sets';
 import { CookiesProvider } from 'react-cookie';
 import Play from './play/play';
+import Leaderboard from './games/leaderboard';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +29,7 @@ const router = createBrowserRouter(
         <Route path='/' element={<Home />} />
         <Route path="/games/:id/participants" element={<Participants />} />
         <Route path="/games/:id/test" element={<Question />} />
+        <Route path='/games/:id/leaderboard' element={<Leaderboard />} />
         <Route path='/create' element={<Create />} />
         <Route path='/sets' element={<Sets />} />
         <Route path='/play' element={<Play />} />
@@ -41,11 +43,9 @@ const router = createBrowserRouter(
 )
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <AnimatePresence mode='wait'>
-      <CookiesProvider>
-        <RouterProvider router={router} />
-      </CookiesProvider>
-    </AnimatePresence>
-  </React.StrictMode>,
+  <AnimatePresence mode='wait'>
+    <CookiesProvider>
+      <RouterProvider router={router} />
+    </CookiesProvider>
+  </AnimatePresence>
 )

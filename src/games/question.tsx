@@ -1,3 +1,5 @@
+import { useUsername } from '@/hooks/useUsername'
+import { socket } from '@/lib/socket'
 import { containerMotion, itemMotion } from '@/utils/motion'
 import { AnimatePresence, motion, useAnimate } from 'framer-motion'
 import { CheckIcon, XIcon } from 'lucide-react'
@@ -23,32 +25,6 @@ type SolutionItemProps = {
     isCorrect: boolean | null
     solution: number
     setSolution?: React.Dispatch<React.SetStateAction<number>>
-}
-
-const SolutionItem = ({ text, position, isCorrect, setSolution, solution }: SolutionItemProps) => {
-    const baseHover = { scale: 1.1, zIndex: 99 }
-    const colors = ['bg-red-600', 'bg-blue-600', 'bg-yellow-600', 'bg-green-600']
-    const modifiedHovers = [{ ...baseHover, rotate: -3 }, { ...baseHover, rotate: 3 }, { ...baseHover, rotateZ: 3 }, { ...baseHover, rotateZ: -3 }]
-    const isSolved = isCorrect !== null
-    return (
-        <motion.div
-            onClick={() => setSolution && setSolution(position)}
-            variants={itemMotion}
-            transition={{ duration: .25 }}
-            whileHover={isSolved ? {} : modifiedHovers[position]}
-            className={`w-full relative h-48 z-50 flex justify-center items-center ${colors[position]} ${isSolved ? (isCorrect ? "bg-opacity-100" : "bg-opacity-30") : "bg-opacity-100"}`}>
-            {text}
-            {isSolved && isCorrect && <div className='absolute -top-4 -right-4 w-10 flex justify-center items-center h-10 rounded-full bg-green-600 '>
-                <CheckIcon className='text-white' />
-            </div>}
-            {
-                isSolved && !isCorrect && solution == position && <div className='absolute -top-4 -right-4 w-10 flex justify-center items-center h-10 rounded-full bg-red-600 '>
-                    <XIcon className='text-white' />
-                </div>
-            }
-        </motion.div>
-    )
-
 }
 
 function Question({ num, solution, setSolution }: { num: number, solution: number, setSolution: Dispatch<SetStateAction<number>> }) {
@@ -134,28 +110,61 @@ export default function Exam() {
     const [solution, setSolution] = React.useState(-1)
     const [questionNumber, setQuestionNumber] = React.useState(1)
     const [isLoading, setIsLoading] = React.useState(false);
-
-    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-    function animateBar() {
-
-    }
+    const { username, setUsername } = useUsername()
+    const { id } = useParams<{ id: string }>()
 
     React.useEffect(() => {
-        async function nextQuestion() {
-            await delay(4000)
-            setIsLoading(true)
-            await delay(500)
-            if (solution != -1) {
-                setQuestionNumber(i => i + 1)
-                setSolution(-1)
-                setIsLoading(false)
-            }
+        function onConnect() {
+            console.log('connected')
         }
+
+        function onDisconnect() {
+            console.log('disconnected')
+        }
+
+        function onNextQuestion() {
+            console.log('next question')
+            setQuestionNumber(i => i + 1)
+            setSolution(-1)
+        }
+
+        socket.on('connect', onConnect)
+        socket.on('disconnect', onDisconnect)
+        socket.on('nextQuestion', onNextQuestion)
+        return () => {
+            socket.off('connect', onConnect)
+            socket.off('disconnect', onDisconnect)
+            socket.off('nextQuestion', onNextQuestion)
+        }
+    }, [])
+
+    React.useEffect(function joinGameWithSocket() {
+        socket.emit('joinGame', JSON.stringify({ gameId: id, name: username }));
+        console.log(socket.id)
+    }, [socket, id, username])
+
+    React.useEffect(function resolveQuestion() {
         if (solution != -1) {
-            nextQuestion()
+            socket.emit('solution', JSON.stringify({ gameId: id, questionId: questionNumber, solution, userId: 1 }))
         }
-    }, [solution]);
+    }, [solution])
+
+
+    // React.useEffect(() => {
+    //     async function nextQuestion() {
+    //         await delay(4000)
+    //         setIsLoading(true)
+    //         await delay(500)
+    //         if (solution != -1) {
+    //             setQuestionNumber(i => i + 1)
+    //             setSolution(-1)
+    //             setIsLoading(false)
+    //         }
+    //     }
+    //     if (solution != -1) {
+    //         nextQuestion()
+    //     }
+    // }, [solution]);
 
     return (
         <AnimatePresence mode='wait'>

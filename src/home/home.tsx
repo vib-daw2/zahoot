@@ -1,3 +1,4 @@
+import { useUsername } from '@/hooks/useUsername';
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRightIcon } from 'lucide-react';
 import React from 'react'
@@ -31,7 +32,7 @@ export default function Home({ }: Props) {
     const [pin, setPin] = React.useState('')
     const [page, setPage] = React.useState(0)
     const [cookies, _] = useCookies(['accessToken'])
-    const [username, setUsername] = React.useState<string | null>(null)
+    const { username, setUsername } = useUsername()
     const navigate = useNavigate()
     const validateOnInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (isNaN(parseInt(e.target.value.charAt(e.target.value.length - 1)))) {
@@ -44,13 +45,15 @@ export default function Home({ }: Props) {
     }
 
     function goNext() {
-        if (username) {
+        if (page === 1) {
             if (localStorage.getItem('ZAHOOT_USERNAME') !== username) {
                 localStorage.setItem('ZAHOOT_USERNAME', username)
             }
             console.log('goNext')
             navigate(`/games/${pin}/participants`)
         } else {
+            setUsername('')
+            localStorage.removeItem('ZAHOOT_USERNAME')
             setPage(1)
         }
     }
