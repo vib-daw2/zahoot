@@ -43,6 +43,12 @@ export default function Home({ }: Props) {
         return e.target.value
     }
 
+    React.useEffect(() => {
+        if (localStorage.getItem('ZAHOOT_USERNAME')) {
+            setUsername(localStorage.getItem('ZAHOOT_USERNAME')!)
+        }
+    }, [])
+
     function goNext() {
         if (page === 1) {
             if (localStorage.getItem('ZAHOOT_USERNAME') !== username) {
