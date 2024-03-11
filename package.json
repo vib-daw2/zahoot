@@ -26,6 +26,7 @@
     "react-dom": "^18.2.0",
     "react-element-to-jsx-string": "^15.0.0",
     "react-hook-form": "^7.50.1",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.21.2",
     "socket.io-client": "^4.7.4",
     "sort-by": "^0.0.2",

@@ -1,13 +1,14 @@
 import React from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { Outlet } from 'react-router-dom'
 
-type Props = {}
-
-export default function RootLayout({ }: Props) {
+export default function RootLayout() {
+    const queryClient = new QueryClient()
     return (
         <div className=' overflow-x-hidden'>
-
-            <Outlet />
+            <QueryClientProvider client={queryClient}>
+                <Outlet />
+            </QueryClientProvider>
         </div>
     )
 }
