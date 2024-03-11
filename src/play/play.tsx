@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion'
 import { Loader2Icon, PlayIcon } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import {getSetByIdResponse} from "../../backend/types/routes/sets/getSetByIdResponse"
 
-type Props = {}
-
-export default function Play({ }: Props) {
+export default function Play() {
     const [loading, setLoading] = React.useState(false)
-    const [gameCode, setGameCode] = React.useState<number | null>(null)
+    const [, setGameCode] = React.useState<number | null>(null)
+    const [cookies,] = useCookies(['accessToken'])
     const navigation = useNavigate()
     const playGame = async () => {
         setLoading(true)
@@ -17,6 +19,19 @@ export default function Play({ }: Props) {
         setGameCode(123456)
         navigation(`/games/123456/participants`)
     }
+
+    const fetchMyGames = async () => {
+        const res = await fetch(import.meta.env.VITE_API_URL + '/sets/mine', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + cookies.accessToken
+            }
+        })
+        return await res.json() as getSetByIdResponse[]
+    }
+
+    const {data, isLoading} = useQuery('myGames', fetchMyGames)
+
     return (
         <div className='w-full h-screen flex flex-col justify-center items-center'>
             <motion.div initial={{ scale: 0.2 }} animate={{ scale: 1 }} className='text-6xl mb-8 mt-2 font-bold font-zahoot text-white'>Zahoot!</motion.div>
@@ -24,7 +39,11 @@ export default function Play({ }: Props) {
                 <div className='text-lg text-white mb-2'>Select a question set to get started</div>
                 <select name="test" id="test" className='w-full p-2'>
                     {
-                        Array(9).fill(0).map((_, i) => <option className='py-1' value={i} key={i}>Test {i + 1}</option>)
+                        isLoading
+                            ?
+                            <option>Loading ...</option>
+                            :
+                            data?.map((set) => <option key={set.id} value={set.id}>{set.name}</option>)
                     }
                 </select>
                 <button disabled={loading} onClick={playGame} className='w-full py-2 rounded-md bg-cyan-400 disabled:bg-cyan-700 disabled:text-cyan-400 flex flex-row items-center justify-center gap-2 text-cyan-900'>
