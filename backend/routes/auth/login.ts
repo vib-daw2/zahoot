@@ -43,10 +43,11 @@ export default async function handleLogin(req: Request, res: Response) {
             username: user.username,
             email: user.email,
         };
+        const expiresIn = "14d";
         const response: loginResponse = {
             error: false,
             message: "User logged in successfully",
-            token: jwt.sign(payload, process.env.JWT_SECRET!),
+            token: jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn }),
             data: {
                 name: user.name,
                 username: user.username,

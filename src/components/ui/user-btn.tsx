@@ -1,23 +1,23 @@
-import { LogOutIcon, PlayIcon } from 'lucide-react'
-import React, { MouseEventHandler } from 'react'
+import { LogOutIcon, PlayIcon, SettingsIcon } from 'lucide-react'
+import React, { useEffect } from 'react'
 import { useCookies } from 'react-cookie'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-type Props = {}
 
-export default function UserBtn({ }: Props) {
+export default function UserBtn() {
     const [cookies, setCookies] = useCookies(['accessToken'])
     const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(cookies.accessToken)
     const [user, setUser] = React.useState<{ username: string; name: string } | null>(null)
     const [open, setOpen] = React.useState(false)
     const location = useLocation()
+    const navigate = useNavigate()
 
-    React.useEffect(() => {
+    useEffect(() => {
         setIsLoggedIn(cookies.accessToken)
         console.log(cookies)
     }, [cookies, location])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (cookies.accessToken) {
             const username = localStorage.getItem('ZAHOOT_USERNAME')
             const name = localStorage.getItem('ZAHOOT_NAME')
@@ -59,10 +59,16 @@ export default function UserBtn({ }: Props) {
                         <div className='text-sm text-slate-400 font-zahoot'>@{user.username}</div>
                     </div>
                     {
-                        open && <button onClick={logout} className='absolute top-14 py-2 inline-flex items-center px-4 left-0 border border-slate-800 font-medium text-red-500 hover:bg-red-800/50 rounded-b-md border-t-0 w-[150px]'>
-                            <LogOutIcon size={16} className='mr-2' />
-                            Log Out
-                        </button>
+                        open && <div className='flex flex-col absolute top-14 right-0 bg-slate-950 border border-slate-800 rounded-md'>
+                            <button onClick={() => navigate('/settings')} className='py-2 inline-flex items-center px-4 left-0 border border-slate-800 text-white font-light hover:font-normal hover:bg-slate-800 rounded-b-md border-t-0 w-[150px]'>
+                                <SettingsIcon size={16} className='mr-2' />
+                                Settings
+                            </button>
+                            <button onClick={logout} className='py-2 inline-flex items-center px-4 left-0 border border-slate-800 font-medium text-red-500 hover:bg-red-800/50 rounded-b-md border-t-0 w-[150px]'>
+                                <LogOutIcon size={16} className='mr-2' />
+                                Log Out
+                            </button>
+                        </div>
                     }
                 </div>
             </div>
