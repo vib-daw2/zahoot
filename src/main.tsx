@@ -22,6 +22,7 @@ import { CookiesProvider } from 'react-cookie';
 import Play from './play/play';
 import Leaderboard from './games/leaderboard';
 import NotFound from './notFound/notFound';
+import Settings from './settings/settings';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
         <Route path='/games/:id/leaderboard' element={<Leaderboard />} />
         <Route path='/create' element={<Create />} />
         <Route path='/sets' element={<Sets />} />
+        <Route path='/settings' element={<Settings />} />
         <Route path='/play' element={<Play />} />
         <Route element={<LoginLayout />}>
           <Route path='/login' element={<Login />} />
