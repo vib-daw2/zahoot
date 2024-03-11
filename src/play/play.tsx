@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Loader2Icon, PlayIcon } from 'lucide-react'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
