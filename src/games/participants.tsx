@@ -51,7 +51,7 @@ const ParticipantMouse = ({ participant: { x, y, name } }: { participant: Partic
             ref={mouseRef}
             initial={{ opacity: 0, translateY: 100 }}
             animate={{ opacity: 1, translateY: 0 }}
-            className={`absolute`}>
+            className={`absolute z-[9999]`}>
             <svg
                 stroke="currentColor"
                 fill="currentColor"
@@ -174,7 +174,9 @@ export default function Participants({ }: Props) {
 
 
     React.useEffect(function joinGameWithSocket() {
-        socket.emit('joinGame', JSON.stringify({ gameId: id, name: username }));
+        if (username && username != "" && username !== "unknown") {
+            socket.emit('joinGame', JSON.stringify({ gameId: id, name: username }));
+        }
     }, [socket, id, username])
 
     React.useEffect(function GetCurrentUser() {
@@ -185,10 +187,11 @@ export default function Participants({ }: Props) {
                 }
             }, 500)
         })
-        p.then(() => { })
-        if (!username || username === '') {
-            setUsername(localStorage.getItem('ZAHOOT_USERNAME') || 'unknown')
-        }
+        p.then(() => {
+            if (!username || username === '') {
+                setUsername(localStorage.getItem('ZAHOOT_USERNAME') || 'unknown')
+            }
+        })
     }, [localStorage])
 
     function copyToClipboard() {

@@ -33,6 +33,6 @@ export default async function handleConnection(socket: Socket) {
 
     // Desconexión
     socket.on("disconnect", () => {
-        console.log("User disconnected");
+        console.log("User disconnected", socket.id);
     });
 }
