@@ -15,6 +15,7 @@ export async function handleGetMySets(req: Request, res: Response) {
                 select: {
                     id: true,
                     question: true,
+                    choices: true
                 }
             }
         },
