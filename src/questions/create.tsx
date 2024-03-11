@@ -1,11 +1,12 @@
-import { PlusIcon, XIcon } from 'lucide-react'
+import { PlusIcon, SaveIcon, XIcon } from 'lucide-react'
 import React from 'react'
 import useQuestion from '@/hooks/useQuestion'
+import SaveDialog from '@/components/set/save-dialog'
 
 type Props = {}
 
 export default function Create({ }: Props) {
-    const { questions, addQuestion, updateQuestion, removeQuestion, setQuestions } = useQuestion([])
+    const { questions, addQuestion, updateQuestion, removeQuestion, setQuestions } = useQuestion()
     const [selectedQuestion, setSelectedQuestion] = React.useState<number | null>(questions.length === 0 ? null : 0)
 
     React.useEffect(() => {
@@ -46,7 +47,8 @@ export default function Create({ }: Props) {
                     ))
                 }
             </div>
-            {selectedQuestion !== null && <div className='pl-96 w-2/3 mx-auto h-screen flex flex-col gap-4 justify-center items-center'>
+            <SaveDialog />
+            {selectedQuestion !== null && <div className='pl-96 relative w-2/3 mx-auto h-screen flex flex-col gap-4 justify-center items-center'>
                 <input
                     placeholder='Question' value={selectedQuestion !== null ? questions[selectedQuestion]?.question : ""}
                     onChange={e => selectedQuestion !== null && updateQuestion(selectedQuestion, { ...questions[selectedQuestion], question: e.currentTarget.value })}
@@ -57,7 +59,18 @@ export default function Create({ }: Props) {
                         Array.from({ length: 4 }).map((_, index) => (
                             <div key={`sol_${index}`} className='flex gap-3 w-full'>
                                 <input type="radio" name="solution" id={`sol_${index}`} checked={selectedQuestion === index ? true : false} onChange={() => selectedQuestion !== null && updateQuestion(selectedQuestion, { ...questions[selectedQuestion], solution: index })} className='w-6' />
-                                <input type="text" name="solution-text" id={`sol_${index}_text`} className='w-full py-1 px-2 bg-transparent border-b border-b-white focus:ring-0 text-white focus:outline-none' />
+                                <input
+                                    type="text"
+                                    name="solution-text"
+                                    id={`sol_${index}_text`}
+                                    value={questions[selectedQuestion]?.answers[index] ?? ""}
+                                    onChange={e => {
+                                        const newAnswers = questions[selectedQuestion].answers
+                                        newAnswers[index] = e.currentTarget.value
+                                        updateQuestion(selectedQuestion, { ...questions[selectedQuestion], answers: newAnswers })
+                                    }}
+                                    className='w-full py-1 px-2 bg-transparent border-b border-b-white focus:ring-0 text-white focus:outline-none'
+                                />
                             </div>
                         ))
                     }

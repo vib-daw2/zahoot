@@ -1,10 +1,22 @@
+import useQuestion from '@/hooks/useQuestion'
+import { FormattedQuestion, unformatQuestion } from '@/utils/sets/create'
 import { CopyIcon, MessageCircleQuestion, PencilIcon, PlayIcon } from 'lucide-react'
 import React from 'react'
 import { useCookies } from 'react-cookie'
 import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import { getSetByIdResponse } from '~/types/routes/sets/getSetByIdResponse'
 
 const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
+    console.log({ set })
+    const { setQuestions } = useQuestion()
+    const navigate = useNavigate()
+    const formattedQuestions = set.questions.map(x => unformatQuestion(x as FormattedQuestion))
+
+    const copySet = () => {
+        setQuestions(formattedQuestions)
+        navigate("/create")
+    }
     // TODO Usar el parametro id para mostrar las preguntas de dentro del set o algo asi
     return (
         <div className='w-full h-fit border border-slate-800 rounded-md flex flex-col group'>
@@ -14,7 +26,6 @@ const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
             <div className='h-36 flex flex-col justify-between items-start bg-slate-950 text-white p-4 rounded-b-md group-hover:bg-slate-800'>
                 <div className='w-full flex justify-between border-b border-b-slate-800 pb-1 items-baseline'>
                     <div className='font-zahoot  text-lg'>{set.name}</div>
-                    {/* <div className='text-sm'>{set.questions.length} Questions</div> */}
                 </div>
                 <div className='pt-1 text-slate-300'>{set.description}</div>
                 <div className='h-fit w-full flex justify-end gap-3'>
@@ -22,10 +33,10 @@ const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
                         <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/copy:flex'>
                             <div className='text-white'>Duplicate</div>
                         </div>
-                        <button className='hover:bg-slate-950 p-2 rounded-md'>
+                        <button onClick={copySet} className='hover:bg-slate-950 p-2 rounded-md'>
                             <CopyIcon className='w-4 h-4' />
                         </button>
-                        </div>
+                    </div>
                     <div className='relative group/editar'>
                         <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/editar:flex'>
                             <div className='text-white'>Edit</div>
