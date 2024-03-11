@@ -3,8 +3,6 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom';
 import UserBtn from './user-btn';
 
-type Props = {}
-
 const container = {
     hidden: { opacity: 1, scale: 0 },
     visible: {
@@ -37,7 +35,7 @@ const NavbarItem = ({ text, href }: { text: string, href: string }) => {
     )
 }
 
-export default function Navbar({ }: Props) {
+export default function Navbar() {
     const links = [
         {
             text: 'Join',
