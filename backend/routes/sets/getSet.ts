@@ -29,7 +29,7 @@ export async function handleGetMySets(req: Request, res: Response) {
             id: set.id,
             name: set.name,
             description: set.description,
-            Questions: set.Questions,
+            questions: set.Questions,
             isPublic: set.isPublic,
         };
     });
@@ -81,7 +81,7 @@ export async function handleGetSetById(req: Request, res: Response) {
             name: "",
             description: "",
             isPublic: false,
-            Questions: [],
+            questions: [],
         };
         return res.status(404).json(response);
     } else if (!req.user && !set.isPublic) {
@@ -93,7 +93,7 @@ export async function handleGetSetById(req: Request, res: Response) {
             name: "",
             description: "",
             isPublic: false,
-            Questions: [],
+            questions: [],
         };
         return res.status(401).json(response);
     } else if (req.user && req.user.id !== set.ownerId && !set.isPublic) {
@@ -105,7 +105,7 @@ export async function handleGetSetById(req: Request, res: Response) {
             name: "",
             description: "",
             isPublic: false,
-            Questions: [],
+            questions: [],
         };
         return res.status(401).json(response);
     }
@@ -116,7 +116,7 @@ export async function handleGetSetById(req: Request, res: Response) {
         name: set.name,
         description: set.description,
         isPublic: set.isPublic,
-        Questions: set.Questions,
+        questions: set.Questions,
     };
     return res.status(200).json(response);
 }
@@ -148,7 +148,7 @@ export async function handleHomePageSets(_req: Request, res: Response) {
             id: set.id,
             name: set.name,
             description: set.description,
-            Questions: set.Questions,
+            questions: set.Questions,
             isPublic: set.isPublic,
         };
     });

@@ -48,11 +48,7 @@ class Games {
 
     public getPlayers(gameId: string): Player[] {
         let game = this.games.find(g => g.id === gameId);
-        if (game) {
-            return game.players;
-        } else {
-            return [];
-        }
+        return game ? game.players : [];
     }
 
     public leaveGame(gameId: string, socketId: string){
