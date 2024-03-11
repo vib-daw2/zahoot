@@ -20,7 +20,7 @@ export default function Play() {
         navigation(`/games/123456/participants`)
     }
 
-    const fetchMyGames = async () => {
+    const fetchMySets = async () => {
         const res = await fetch(import.meta.env.VITE_API_URL + '/sets/mine', {
             method: 'GET',
             headers: {
@@ -30,7 +30,7 @@ export default function Play() {
         return await res.json() as getSetByIdResponse[]
     }
 
-    const {data, isLoading} = useQuery('myGames', fetchMyGames)
+    const {data, isLoading} = useQuery('mySets', fetchMySets)
 
     return (
         <div className='w-full h-screen flex flex-col justify-center items-center'>
