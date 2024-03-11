@@ -4,7 +4,6 @@ import running from "../ongoing/games";
 export default async function moveMouse(data: string, socket: Socket) {
     const { gameId, id, x, y}: { gameId: string, id: number, x: number, y: number } = JSON.parse(data);
     const players = running.getPlayers(gameId)
-    console.log(players)
     const player = players.find(p => p.id == id);
     if (!player) {
         console.error("Player not found");

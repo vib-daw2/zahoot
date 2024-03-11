@@ -12,7 +12,7 @@ export default async function joinGame(data: string, socket: Socket) {
     // }
     await socket.join(dataJ.gameId as string);
     console.log(`User ${dataJ.name} joined game ${dataJ.gameId}`);
-    let id = running.joinGame(dataJ.gameId, dataJ.name);
+    let id = running.joinGame(dataJ.gameId, dataJ.name, socket.id);
     console.log({ id})
     socket.emit("joinedGame", JSON.stringify({
         currentUser: { id, name: dataJ.name},

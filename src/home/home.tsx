@@ -31,7 +31,6 @@ const item = {
 export default function Home({ }: Props) {
     const [pin, setPin] = React.useState('')
     const [page, setPage] = React.useState(0)
-    const [cookies, _] = useCookies(['accessToken'])
     const { username, setUsername } = useUsername()
     const navigate = useNavigate()
     const validateOnInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,11 +51,10 @@ export default function Home({ }: Props) {
             console.log('goNext')
             navigate(`/games/${pin}/participants`)
         } else {
-            setUsername('')
-            localStorage.removeItem('ZAHOOT_USERNAME')
             setPage(1)
         }
     }
+
 
     return (
         <div className='w-full h-screen flex flex-col justify-center items-center z-50'>

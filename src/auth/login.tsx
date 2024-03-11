@@ -47,7 +47,8 @@ export default function Login() {
                 localStorage.setItem("ZAHOOT_NAME", data.data?.name ?? "")
                 localStorage.setItem("ZAHOOT_USERNAME", data.data?.username ?? "")
                 console.log(cookies)
-                navigation('/')
+                // navigation('/')
+                window.location.href = "/"
             }
         } catch (error) {
             console.error(error)
