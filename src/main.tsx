@@ -21,6 +21,7 @@ import Sets from './test-sets/sets';
 import { CookiesProvider } from 'react-cookie';
 import Play from './play/play';
 import Leaderboard from './games/leaderboard';
+import NotFound from './notFound/notFound';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,6 +38,7 @@ const router = createBrowserRouter(
           <Route path='/login' element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           R</Route>
+      <Route path='*' element={<NotFound />} />
       </Route>
     </Route>
   )
