@@ -56,10 +56,10 @@ function AboutSection() {
             <h1 className='font-zahoot text-2xl'>About Zahoot</h1>
             <p className='mt-4'>
                 Zahoot is a quiz app similiar to the original Kahoot (c)
-                It is a project built by Albert Bru and Carlos Carpio as an end of year project for the 2023-24 school year.
+                It is a project built by Albert Bru and Carlos Carpio as the end of year project for the 2023-24 school year.
             </p>
             <p className='mt-4'>
-                The project is built using React, TailwindCSS, and TypeScript on the frontend and Node.js, Express, with MySQL on the backend.
+                The project has been built using React, TailwindCSS, and TypeScript on the frontend and Node.js, Express, Socket.io, with MySQL on the backend.
             </p>
             <p className='mt-4'>
                 The project is open source and can be found on GitHub at
