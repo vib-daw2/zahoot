@@ -1,21 +1,14 @@
 import { LogOutIcon, PlayIcon, SettingsIcon } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useCookies } from 'react-cookie'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 export default function UserBtn() {
     const [cookies, setCookies] = useCookies(['accessToken'])
-    const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(cookies.accessToken)
     const [user, setUser] = React.useState<{ username: string; name: string } | null>(null)
     const [open, setOpen] = React.useState(false)
-    const location = useLocation()
     const navigate = useNavigate()
-
-    useEffect(() => {
-        setIsLoggedIn(cookies.accessToken)
-        console.log(cookies)
-    }, [cookies, location])
 
     useEffect(() => {
         if (cookies.accessToken) {
@@ -34,7 +27,7 @@ export default function UserBtn() {
             localStorage.removeItem("ZAHOOT_NAME")
             setUser(null)
         }
-    }, [localStorage])
+    }, [cookies.accessToken, setCookies])
 
     const logout = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
