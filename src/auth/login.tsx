@@ -28,14 +28,12 @@ export default function Login() {
         try {
             const data = await response.json() satisfies loginResponse as loginResponse
             if (data.error) {
-                console.log(data)
                 setError(data.message)
             } else {
                 setCookies('accessToken', data.token)
                 localStorage.setItem("ZAHOOT_NAME", data.data?.name ?? "")
                 localStorage.setItem("ZAHOOT_USERNAME", data.data?.username ?? "")
                 localStorage.setItem("ZAHOOT_ADMIN", data.data?.isAdmin ? "true" : "false")
-                console.log(cookies)
                 navigate('/')
             }
         } catch (error) {
