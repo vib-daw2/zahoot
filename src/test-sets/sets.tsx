@@ -35,7 +35,7 @@ const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (q
         setQuestions(formattedQuestions)
         navigate(action)
     }
-    let revalidator = useRevalidator()
+    const revalidator = useRevalidator()
 
     return (
         <div className='h-fit w-full flex justify-end gap-3'>
