@@ -24,13 +24,18 @@ const item = {
 }
 
 const NavbarItem = ({ text, href }: { text: string, href: string }) => {
+    const [hovering, setHovering] = React.useState(false)
     return (
-        <Link to={href}>
+        <Link to={href} onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)} className=' relative'>
             <motion.div
                 variants={item}
-                className='px-8 min-w-32 text-center py-2 hover:border-b-2 border-b-cyan-400 hover:text-cyan-400 hover:font-semibold'>
+                className='px-8 min-w-32 text-center py-2  border-b-cyan-400 hover:text-cyan-400 hover:font-semibold'>
                 {text}
             </motion.div>
+            {hovering && <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                className='absolute w-full rounded-xs -bottom-3 bg-cyan-500 h-1 px-3'></motion.div>}
         </Link>
     )
 }
@@ -58,7 +63,7 @@ export default function Navbar() {
                     variants={container}
                     initial="hidden"
                     animate="visible"
-                    className='flex-1 flex justify-center items-center '>
+                    className='flex-1 gap-2 flex justify-center items-center '>
                     {links.map((link, i) => <NavbarItem key={i} {...link} />)}
                 </motion.div>
                 <div className='flex-1 flex justify-end items-center'>

@@ -6,35 +6,61 @@ import { useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 
 type Props = {
+    defaultName: string;
+    defaultDescription: string;
+    id?: string;
 }
 
-export default function SaveDialog({ }: Props) {
+export default function SaveDialog({ defaultName, defaultDescription, id }: Props) {
+    console.log({ defaultName, defaultDescription, id })
     const { questions } = useQuestion()
     const [cookie,] = useCookies(['accessToken'])
     const [open, setOpen] = React.useState(false)
-    const [name, setName] = React.useState('')
-    const [description, setDescription] = React.useState('')
+    const [name, setName] = React.useState(defaultName)
+    const [description, setDescription] = React.useState(defaultDescription)
     const [status, setStatus] = React.useState('')
     const [error, setError] = React.useState(false)
+    const [nameValid, setNameValid] = React.useState(true)
     const navigate = useNavigate()
+
+    React.useEffect(() => {
+        setName(defaultName)
+        setDescription(defaultDescription)
+    }, [defaultName, defaultDescription])
 
     const save = async () => {
         console.log({ name, description, questions })
-        setStatus("Creating set...")
-        const setData = await createSet({ name, description, token: cookie.accessToken })
-        if (!setData) {
-            setError(true)
-            return
-        }
-        console.log(setData)
-        setStatus("Uploading questions...")
-        const success = await uploadQuestions({ id: setData.id, questions: questions, token: cookie.accessToken })
-        if (success) {
-            setStatus("Done")
-            navigate("/sets")
+        if (!id) {
+            setStatus("Creating set...")
+            const setData = await createSet({ name, description, token: cookie.accessToken })
+            if (!setData) {
+                setError(true)
+                return
+            }
+            console.log(setData)
+            setStatus("Uploading questions...")
+            const success = await uploadQuestions({ id: setData.id, questions: questions, token: cookie.accessToken })
+            if (success) {
+                setStatus("Done")
+                navigate("/sets")
+            } else {
+                setError(true)
+            }
         } else {
-            setError(true)
+            setStatus("Uploading questions...")
+            const success = await uploadQuestions({ id: parseInt(id), questions: questions, token: cookie.accessToken })
+            if (success) {
+                setStatus("Done")
+                navigate("/sets")
+            } else {
+                setError(true)
+            }
         }
+    }
+
+    const updateName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.currentTarget.value)
+        setNameValid(e.currentTarget.value.length > 5)
     }
 
     return (
@@ -46,7 +72,8 @@ export default function SaveDialog({ }: Props) {
             {open && <div className='fixed w-full bg-slate-600 bg-opacity-20 backdrop-blur-sm z-[999] h-screen flex justify-center items-center' onClick={() => setOpen(false)}>
                 <div onClick={e => e.stopPropagation()} className=' w-full flex flex-col gap-2 max-w-md text-white p-4 bg-slate-700 rounded-md'>
                     <div className=' font-zahoot text-white font-bold text-xl'>Save Set</div>
-                    <input value={name} onChange={e => setName(e.currentTarget.value)} type="text" className='w-full py-1 px-2 bg-transparent border-b-slate-200 border-b focus:outline-none text-white' placeholder='Set Name' />
+                    <input value={name} onChange={updateName} type="text" className={`w-full py-1 px-2 bg-transparent ${nameValid ? "border-b-slate-200" : "border-b-red-500"} border-b focus:outline-none text-white`} placeholder='Set Name' />
+                    {!nameValid && <span className=' text-red-500'>Must have at least 5 characters</span>}
                     <textarea value={description} onChange={e => setDescription(e.currentTarget.value)} className=' bg-slate-900 text-white rounded-md p-2' name="description" id="description" rows={4} maxLength={254}></textarea>
                     {status && status !== "Done" &&
                         <div className='text-white font-zahoot flex items-center gap-3'>

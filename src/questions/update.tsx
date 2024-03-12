@@ -2,12 +2,39 @@ import { PlusIcon, SaveIcon, XIcon } from 'lucide-react'
 import React from 'react'
 import useQuestion from '@/hooks/useQuestion'
 import SaveDialog from '@/components/set/save-dialog'
+import { useQuery } from 'react-query'
+import { useParams } from 'react-router-dom'
+import { useCookies } from 'react-cookie'
+import { FormattedQuestion, formatQuestion, unformatQuestion } from '@/utils/sets/create'
 
-type Props = {}
+type Props = {
+    action: "edit" | "create"
+}
 
-export default function Create({ }: Props) {
+export default function UpdateQuestions({ action = "create" }: Props) {
     const { questions, addQuestion, updateQuestion, removeQuestion, setQuestions } = useQuestion()
     const [selectedQuestion, setSelectedQuestion] = React.useState<number | null>(questions.length === 0 ? null : 0)
+    const [setName, setSetName] = React.useState('')
+    const [setDescription, setSetDescription] = React.useState('')
+    const { id } = useParams<{ id?: string }>()
+    const [cookies,] = useCookies(['accessToken'])
+    const { data, isLoading } = useQuery('questions', async () => {
+        if (action === "create") {
+            return null
+        }
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/sets/${id}`, {
+            headers: {
+                "Authorization": `Bearer ${cookies.accessToken}`,
+                "Content-Type": "application/json"
+            }
+        })
+        if (!response.ok) {
+            return null
+        }
+        const values = await response.json()
+        console.log({ values })
+        return values as { name: string, description: string, questions: FormattedQuestion[] }
+    })
 
     React.useEffect(() => {
         if (questions.length === 0 || selectedQuestion === -1) {
@@ -24,10 +51,19 @@ export default function Create({ }: Props) {
         }
     }, [questions])
 
+    React.useEffect(() => {
+        if (data) {
+            console.log({ data })
+            console.log({ name: data.name, description: data.description })
+            setQuestions(data.questions.map(unformatQuestion))
+            setSetName(data.name)
+            setSetDescription(data.description)
+        }
+    }, [data])
+
     function deleteQuestion(index: number) {
         removeQuestion(index)
     }
-
 
     return (
         <>
@@ -47,7 +83,7 @@ export default function Create({ }: Props) {
                     ))
                 }
             </div>
-            <SaveDialog />
+            <SaveDialog defaultName={setName} defaultDescription={setDescription} id={id} />
             {selectedQuestion !== null && <div className='pl-96 relative w-2/3 mx-auto h-screen flex flex-col gap-4 justify-center items-center'>
                 <input
                     placeholder='Question' value={selectedQuestion !== null ? questions[selectedQuestion]?.question : ""}
@@ -58,7 +94,7 @@ export default function Create({ }: Props) {
                     {
                         Array.from({ length: 4 }).map((_, index) => (
                             <div key={`sol_${index}`} className='flex gap-3 w-full'>
-                                <input type="radio" name="solution" id={`sol_${index}`} checked={selectedQuestion === index ? true : false} onChange={() => selectedQuestion !== null && updateQuestion(selectedQuestion, { ...questions[selectedQuestion], solution: index })} className='w-6' />
+                                <input type="radio" name="solution" id={`sol_${index}`} checked={questions[selectedQuestion].solution === index ? true : false} onChange={() => selectedQuestion !== null && updateQuestion(selectedQuestion, { ...questions[selectedQuestion], solution: index })} className='w-6' />
                                 <input
                                     type="text"
                                     name="solution-text"
