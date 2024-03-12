@@ -1,4 +1,3 @@
-import useQuestion, { Question } from '@/hooks/useQuestion'
 import { Loader2Icon, XIcon } from 'lucide-react'
 import React from 'react'
 import { useCookies } from 'react-cookie'

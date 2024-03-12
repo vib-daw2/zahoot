@@ -9,5 +9,7 @@ export const createQuestionsRequestSchema = z.object({
         })),
         type: z.enum(["multipleAnswer", "trueFalse"]),
         timeLimit: z.number().optional(),
-    })),
+    })).optional(),
+    name: z.string().optional(),
+    description: z.string().optional(),
 });

@@ -2,31 +2,18 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { AtSignIcon, LockIcon } from 'lucide-react'
 import React from 'react'
 import { useCookies } from 'react-cookie'
-import { Link, redirect, useNavigate, useNavigation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginRequestSchema } from "@/utils/schemas/auth"
-
-
-type LoginResponse = {
-    error: boolean
-    message: string
-    token?: string
-    data?: {
-        email: string;
-        name: string;
-        username: string;
-    }
-}
-
+import { loginResponse } from "~/types/routes/auth/loginResponse"
 
 export default function Login() {
-    const [cookies, setCookies] = useCookies()
+    const [, setCookies] = useCookies()
     const [error, setError] = React.useState<string | null>(null)
     const { register, formState: { errors }, handleSubmit, watch } = useForm<z.infer<typeof loginRequestSchema>>({
         resolver: zodResolver(loginRequestSchema)
     })
-    const navigation = useNavigate()
 
     const onSubmit: SubmitHandler<z.infer<typeof loginRequestSchema>> = async (data) => {
         setError(null)
@@ -38,17 +25,20 @@ export default function Login() {
             }
         })
         try {
-            const data = await response.json() satisfies LoginResponse as LoginResponse
+            const data = await response.json() satisfies loginResponse as loginResponse
             if (data.error) {
-                console.log(data)
                 setError(data.message)
             } else {
+                // Guardamos el token en las cookies y los datos del usuario en el localStorage
                 setCookies('accessToken', data.token)
                 localStorage.setItem("ZAHOOT_NAME", data.data?.name ?? "")
                 localStorage.setItem("ZAHOOT_USERNAME", data.data?.username ?? "")
-                console.log(cookies)
-                // navigation('/')
-                window.location.href = "/"
+                localStorage.setItem("ZAHOOT_ADMIN", data.data?.isAdmin ? "true" : "false")
+
+                // El redirect despues de hacer login se hace asi para que se recargue la pagina y 
+                // se actualice la navbar. Lo propio seria usar el hook useNavigate de react-router-dom
+                // para navegar pero eso no actualiza la navbar que está en el layout
+                window.location.href = '/'
             }
         } catch (error) {
             console.error(error)

@@ -8,6 +8,7 @@ export const loginResponseSchema = z.object({
         name: z.string(),
         username: z.string(),
         email: z.string(),
+        isAdmin: z.boolean().optional().default(false),
     }).optional(),
 });
 

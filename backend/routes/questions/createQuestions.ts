@@ -18,7 +18,7 @@ export async function handleCreateQuestions(req: Request, res: Response) {
         return res.status(400).json(response);
     }
 
-    const { questions } = validated.data;
+    const { questions, name, description } = validated.data;
 
     // We check if the question set exists and if the user owns it
     const questionSet = await db.questionSet.findUnique({
@@ -36,15 +36,35 @@ export async function handleCreateQuestions(req: Request, res: Response) {
         return res.status(404).json(response);
     }
 
-    // We delete all the questions in the set first
-    await db.question.deleteMany({
-        where: {
-            setId: questionSet.id,
-        },
-    });
+    // If the user wants to update the questions
+    if (questions) {
+        // We delete all the questions in the set first
+        await db.question.deleteMany({
+            where: {
+                setId: questionSet.id,
+            },
+        });
 
-    // We create the new questions
-    await helperCreateQuestionsInSet(questions, questionSet.id, db);
+        // We insert the new questions
+        await helperCreateQuestionsInSet(questions, questionSet.id, db);
+    }
+
+    // If the user wants to update the name or description
+    if (name) {
+        await db.questionSet.update({
+            where: { id: questionSet.id },
+            data: { name },
+        });
+    }
+
+    // If the user wants to update the description
+    if (description) {
+        await db.questionSet.update({
+            where: { id: questionSet.id },
+            data: { description },
+        });
+    }
+
 
     // Return success
     const response: createQuestionsResponse = {
@@ -64,7 +84,7 @@ async function helperCreateQuestionsInSet(questions: TypeOf<typeof createQuestio
             data: {
                 Questions: {
                     createMany: {
-                        data: questions.map((question) => ({
+                        data: questions!.map((question) => ({ // Sabemos que questions no es undefined
                             question: question.question,
                             type: question.type,
                             timeLimit: question.timeLimit,
@@ -74,7 +94,7 @@ async function helperCreateQuestionsInSet(questions: TypeOf<typeof createQuestio
             },
         });
 
-        for (const question of questions) {
+        for (const question of questions!) {
             const createdQuestion = await prisma.question.findFirst({
                 where: {
                     question: question.question,

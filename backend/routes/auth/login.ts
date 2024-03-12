@@ -52,6 +52,7 @@ export default async function handleLogin(req: Request, res: Response) {
                 name: user.name,
                 username: user.username,
                 email: user.email,
+                isAdmin: user.isAdmin,
             },
         };
         return res.status(200).json(response);
