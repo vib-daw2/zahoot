@@ -14,9 +14,11 @@ export default function UserBtn() {
         if (cookies.accessToken) {
             const username = localStorage.getItem('ZAHOOT_USERNAME')
             const name = localStorage.getItem('ZAHOOT_NAME')
-            if (!username || !name) {
+            const admin = localStorage.getItem('ZAHOOT_ADMIN')
+            if (!username || !name || !admin) {
                 localStorage.removeItem("ZAHOOT_USERNAME")
                 localStorage.removeItem("ZAHOOT_NAME")
+                localStorage.removeItem("ZAHOOT_ADMIN")
                 setCookies("accessToken", null)
                 setUser(null)
             } else {
@@ -25,6 +27,7 @@ export default function UserBtn() {
         } else {
             localStorage.removeItem("ZAHOOT_USERNAME")
             localStorage.removeItem("ZAHOOT_NAME")
+            localStorage.removeItem("ZAHOOT_ADMIN")
             setUser(null)
         }
     }, [cookies.accessToken, setCookies])
@@ -34,6 +37,7 @@ export default function UserBtn() {
         e.stopPropagation()
         localStorage.removeItem("ZAHOOT_USERNAME")
         localStorage.removeItem("ZAHOOT_NAME")
+        localStorage.removeItem("ZAHOOT_ADMIN")
         setCookies("accessToken", null)
         setUser(null)
     }
