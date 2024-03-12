@@ -6,19 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginRequestSchema } from "@/utils/schemas/auth"
-
-
-type LoginResponse = {
-    error: boolean
-    message: string
-    token?: string
-    data?: {
-        email: string;
-        name: string;
-        username: string;
-    }
-}
-
+import { loginResponse } from "~/types/routes/auth/loginResponse"
 
 export default function Login() {
     const [cookies, setCookies] = useCookies()
@@ -38,7 +26,7 @@ export default function Login() {
             }
         })
         try {
-            const data = await response.json() satisfies LoginResponse as LoginResponse
+            const data = await response.json() satisfies loginResponse as loginResponse
             if (data.error) {
                 console.log(data)
                 setError(data.message)
@@ -46,6 +34,7 @@ export default function Login() {
                 setCookies('accessToken', data.token)
                 localStorage.setItem("ZAHOOT_NAME", data.data?.name ?? "")
                 localStorage.setItem("ZAHOOT_USERNAME", data.data?.username ?? "")
+                localStorage.setItem("ZAHOOT_ADMIN", data.data?.isAdmin ? "true" : "false")
                 console.log(cookies)
                 navigate('/')
             }
