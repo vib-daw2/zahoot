@@ -29,11 +29,16 @@ export default function Login() {
             if (data.error) {
                 setError(data.message)
             } else {
+                // Guardamos el token en las cookies y los datos del usuario en el localStorage
                 setCookies('accessToken', data.token)
                 localStorage.setItem("ZAHOOT_NAME", data.data?.name ?? "")
                 localStorage.setItem("ZAHOOT_USERNAME", data.data?.username ?? "")
                 localStorage.setItem("ZAHOOT_ADMIN", data.data?.isAdmin ? "true" : "false")
-                window.location.href = '/' // Se hace asi para que se recargue la pagina y se actualice la navbar
+
+                // El redirect despues de hacer login se hace asi para que se recargue la pagina y 
+                // se actualice la navbar. Lo propio seria usar el hook useNavigate de react-router-dom
+                // para navegar pero eso no actualiza la navbar que está en el layout
+                window.location.href = '/'
             }
         } catch (error) {
             console.error(error)
