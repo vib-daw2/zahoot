@@ -4,7 +4,7 @@ import { CopyIcon, Loader2Icon, MessageCircleQuestion, PencilIcon, PlayIcon, Tra
 import React, { useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useQuery } from 'react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useRevalidator } from 'react-router-dom'
 import { getSetByIdResponse } from '~/types/routes/sets/getSetByIdResponse'
 
 const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
@@ -35,6 +35,7 @@ const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (q
         setQuestions(formattedQuestions)
         navigate(action)
     }
+    let revalidator = useRevalidator()
 
     return (
         <div className='h-fit w-full flex justify-end gap-3'>
@@ -44,7 +45,10 @@ const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (q
                 </div>
                 <button className='hover:bg-slate-950 p-2 rounded-md' onClick={() => setOpenDeleteDialog(true)}>
                     <Trash2Icon className='w-4 h-4' />
-                    {openDeleteDialog && <DeleteSetDialog id={id} close={() => setOpenDeleteDialog(false)} />}
+                    {openDeleteDialog && <DeleteSetDialog id={id} close={() => {
+                        setOpenDeleteDialog(false)
+                        revalidator.revalidate()
+                    }} />}
                 </button>
             </div>
             <div className='relative group/copy'>
@@ -89,6 +93,7 @@ const DeleteSetDialog = ({ id, close }: { id: number, close: () => void }) => {
 
         if (res.success) {
             close()
+            window.location.reload()
         }
     }
 
