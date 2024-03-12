@@ -4,8 +4,16 @@ import { useState } from "react"
 import { useNavigate, useRevalidator } from "react-router-dom"
 import DeleteSetDialog from "./delete-set-dialog"
 import React from "react"
+import PreviewSet from "./preview-set"
 
-const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (questions: Question[]) => void, formattedQuestions: Question[], id: number }) => {
+type Props = {
+    setQuestions: (questions: Question[]) => void
+    formattedQuestions: Question[]
+    id: number
+    name: string
+}
+
+const SetOptions = ({ setQuestions, formattedQuestions, id, name }: Props) => {
     const navigate = useNavigate()
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
     const copySet = (action: string) => {
@@ -44,14 +52,7 @@ const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (q
                     <PencilIcon className='w-4 h-4' />
                 </button>
             </div>
-            <div className='relative group/play'>
-                <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/play:flex'>
-                    <div className='text-white'>Play</div>
-                </div>
-                <button className='hover:bg-slate-950 p-2 rounded-md'>
-                    <PlayIcon className='w-4 h-4' />
-                </button>
-            </div>
+            <PreviewSet name={name} questions={formattedQuestions} />
         </div>
     )
 }
