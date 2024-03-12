@@ -1,10 +1,8 @@
 import useQuestion, { Question } from '@/hooks/useQuestion'
-import { FormattedQuestion, unformatQuestion } from '@/utils/sets/create'
-import { CopyIcon, Loader2Icon, MessageCircleQuestion, PencilIcon, PlayIcon, Trash2Icon, XIcon } from 'lucide-react'
-import React, { useState } from 'react'
+import { Loader2Icon, XIcon } from 'lucide-react'
+import React from 'react'
 import { useCookies } from 'react-cookie'
 import { useQuery } from 'react-query'
-import { useNavigate, useRevalidator } from 'react-router-dom'
 import { getSetByIdResponse } from '~/types/routes/sets/getSetByIdResponse'
 import CardSet from './card-set'
 
