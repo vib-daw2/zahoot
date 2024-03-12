@@ -1,6 +1,6 @@
-import useQuestion from '@/hooks/useQuestion'
+import useQuestion, { Question } from '@/hooks/useQuestion'
 import { FormattedQuestion, unformatQuestion } from '@/utils/sets/create'
-import { CopyIcon, MessageCircleQuestion, PencilIcon, PlayIcon } from 'lucide-react'
+import { CopyIcon, MessageCircleQuestion, PencilIcon, PlayIcon, Trash2Icon } from 'lucide-react'
 import React from 'react'
 import { useCookies } from 'react-cookie'
 import { useQuery } from 'react-query'
@@ -10,13 +10,8 @@ import { getSetByIdResponse } from '~/types/routes/sets/getSetByIdResponse'
 const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
     console.log({ set })
     const { setQuestions } = useQuestion()
-    const navigate = useNavigate()
     const formattedQuestions = set.questions.map(x => unformatQuestion(x as FormattedQuestion))
 
-    const copySet = () => {
-        setQuestions(formattedQuestions)
-        navigate("/create")
-    }
     // TODO Usar el parametro id para mostrar las preguntas de dentro del set o algo asi
     return (
         <div className='w-full h-fit border border-slate-800 rounded-md flex flex-col group'>
@@ -28,36 +23,58 @@ const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
                     <div className='font-zahoot  text-lg'>{set.name}</div>
                 </div>
                 <div className='pt-1 text-slate-300'>{set.description}</div>
-                <div className='h-fit w-full flex justify-end gap-3'>
-                    <div className='relative group/copy'>
-                        <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/copy:flex'>
-                            <div className='text-white'>Duplicate</div>
-                        </div>
-                        <button onClick={copySet} className='hover:bg-slate-950 p-2 rounded-md'>
-                            <CopyIcon className='w-4 h-4' />
-                        </button>
-                    </div>
-                    <div className='relative group/editar'>
-                        <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/editar:flex'>
-                            <div className='text-white'>Edit</div>
-                        </div>
-                        <button className='hover:bg-slate-950 p-2 rounded-md'>
-                            <PencilIcon className='w-4 h-4' />
-                        </button>
-                    </div>
-                    <div className='relative group/play'>
-                        <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/play:flex'>
-                            <div className='text-white'>Play</div>
-                        </div>
-                        <button className='hover:bg-slate-950 p-2 rounded-md'>
-                            <PlayIcon className='w-4 h-4' />
-                        </button>
-                    </div>
-                </div>
+
+                <SetOptions setQuestions={setQuestions} formattedQuestions={formattedQuestions} id={id} />
+
             </div>
         </div>
     )
+}
 
+const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (questions: Question[]) => void, formattedQuestions: Question[], id: number }) => {
+    const navigate = useNavigate()
+
+    const copySet = () => {
+        setQuestions(formattedQuestions)
+        navigate("/create")
+    }
+
+    return (
+        <div className='h-fit w-full flex justify-end gap-3'>
+            <div className='relative group/borrar'>
+                <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/borrar:flex'>
+                    <div className='text-white'>Delete</div>
+                </div>
+                <button className='hover:bg-slate-950 p-2 rounded-md'>
+                    <Trash2Icon className='w-4 h-4' />
+                </button>
+            </div>
+            <div className='relative group/copy'>
+                <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/copy:flex'>
+                    <div className='text-white'>Duplicate</div>
+                </div>
+                <button onClick={copySet} className='hover:bg-slate-950 p-2 rounded-md'>
+                    <CopyIcon className='w-4 h-4' />
+                </button>
+            </div>
+            <div className='relative group/editar'>
+                <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/editar:flex'>
+                    <div className='text-white'>Edit</div>
+                </div>
+                <button className='hover:bg-slate-950 p-2 rounded-md'>
+                    <PencilIcon className='w-4 h-4' />
+                </button>
+            </div>
+            <div className='relative group/play'>
+                <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/play:flex'>
+                    <div className='text-white'>Play</div>
+                </div>
+                <button className='hover:bg-slate-950 p-2 rounded-md'>
+                    <PlayIcon className='w-4 h-4' />
+                </button>
+            </div>
+        </div>
+    )
 }
 
 export default function Sets() {
