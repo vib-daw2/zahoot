@@ -63,6 +63,22 @@ export default function SaveDialog({ defaultName, defaultDescription, id }: Prop
         setNameValid(e.currentTarget.value.length > 5)
     }
 
+    React.useEffect(() => {
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                setOpen(false)
+            }
+        }
+        )
+        return () => {
+            document.removeEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    setOpen(false)
+                }
+            })
+        }
+    }, [])
+
     return (
         <>
             <button onClick={() => setOpen(true)} className=' absolute top-16 gap-3 hover:bg-slate-800 right-10 text-cyan-400 border border-cyan-400 px-4 py-2 flex justify-center items-center rounded-md'>
@@ -70,11 +86,14 @@ export default function SaveDialog({ defaultName, defaultDescription, id }: Prop
                 <div>Save Set</div>
             </button>
             {open && <div className='fixed w-full bg-slate-600 bg-opacity-20 backdrop-blur-sm z-[999] h-screen flex justify-center items-center' onClick={() => setOpen(false)}>
-                <div onClick={e => e.stopPropagation()} className=' w-full flex flex-col gap-2 max-w-md text-white p-4 bg-slate-700 rounded-md'>
+                <div onClick={e => e.stopPropagation()} className=' w-full flex flex-col gap-2 max-w-xl text-white p-4 bg-slate-700 rounded-md'>
                     <div className=' font-zahoot text-white font-bold text-xl'>Save Set</div>
                     <input value={name} onChange={updateName} type="text" className={`w-full py-1 px-2 bg-transparent ${nameValid ? "border-b-slate-200" : "border-b-red-500"} border-b focus:outline-none text-white`} placeholder='Set Name' />
                     {!nameValid && <span className=' text-red-500'>Must have at least 5 characters</span>}
-                    <textarea value={description} onChange={e => setDescription(e.currentTarget.value)} className=' bg-slate-900 text-white rounded-md p-2' name="description" id="description" rows={4} maxLength={254}></textarea>
+                    <div className=' w-full'>
+                        <div className=' text-sm text-slate-200'>Description</div>
+                        <textarea value={description} onChange={e => setDescription(e.currentTarget.value)} className=' w-full bg-slate-900 text-white rounded-md p-2' name="description" id="description" rows={4} maxLength={254}></textarea>
+                    </div>
                     {status && status !== "Done" &&
                         <div className='text-white font-zahoot flex items-center gap-3'>
                             <Loader2Icon className=' animate-spin' />
