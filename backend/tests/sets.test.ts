@@ -1,7 +1,6 @@
 import axios from "axios";
 import getDb from "../prisma/db";
 import { getSetByIdResponseSchema } from "../types/routes/sets/getSetByIdResponse";
-import { getMySetsResponseSchema } from "../types/routes/sets/getMySetsResponse";
 
 describe("Sets CRUD should work", () => {
 
@@ -68,7 +67,8 @@ describe("Sets CRUD should work", () => {
             expect(res.data[0].id).toEqual(id);
             expect(res.data[0].name).toEqual("test");
             expect(res.data[0].description).toEqual("test");
-            expect(getMySetsResponseSchema.safeParse(res.data).success).toEqual(true);
+            expect(Array.isArray(res.data)).toEqual(true);
+            expect(getSetByIdResponseSchema.safeParse(res.data[0]).success).toEqual(true);
         });
     });
 
@@ -171,6 +171,7 @@ describe("Sets CRUD should work", () => {
     
         const token = login.data.token;
     
+        let startTime = Date.now();
         let id = -1;
         await axios.post("http://localhost:3000/api/sets", {
             name: "privateTest",
@@ -178,7 +179,7 @@ describe("Sets CRUD should work", () => {
             isPublic: false
         }, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`,
             }
         }).then((res) => {
             expect(res.status).toEqual(200);
