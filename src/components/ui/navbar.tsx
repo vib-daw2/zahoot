@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom';
 import UserBtn from './user-btn';
+import { useCookies } from 'react-cookie';
 
 const container = {
     hidden: { opacity: 1, scale: 0 },
@@ -35,16 +36,30 @@ const NavbarItem = ({ text, href }: { text: string, href: string }) => {
             {hovering && <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                className='absolute w-full rounded-xs -bottom-3 bg-cyan-500 h-1 px-3'></motion.div>}
+                className='absolute w-full rounded-xs -bottom-3 bg-cyan-500 h-1 px-3 z-1'></motion.div>}
         </Link>
     )
 }
 
 export default function Navbar() {
+
+    const [isAdmin, setIsAdmin] = React.useState(false)
+    const [cookies, setCookies] = useCookies(['accessToken'])
+
+    useEffect(() => {
+        if (cookies.accessToken) {
+            const admin = localStorage.getItem('ZAHOOT_ADMIN')
+            if (admin == 'true') {
+                setIsAdmin(true)
+            }
+        }
+    }, [cookies.accessToken, setCookies])
+
+
     const links = [
         {
             text: 'Join',
-            href: '/'
+            href: '/',
         },
         {
             text: 'Create',
@@ -52,9 +67,15 @@ export default function Navbar() {
         },
         {
             text: 'Sets',
-            href: '/sets'
+            href: '/sets',
+        },
+        {
+            text: 'Admin',
+            href: '/admin',
+            onlyAdmin: true
         }
     ]
+
     return (
         <>
             <div className='fixed top-0 px-12 left-0 select-none text-white w-full bg-slate-950 border-b border-b-slate-800 h-14 flex justify-center items-center z-40'>
@@ -64,7 +85,11 @@ export default function Navbar() {
                     initial="hidden"
                     animate="visible"
                     className='flex-1 gap-2 flex justify-center items-center '>
-                    {links.map((link, i) => <NavbarItem key={i} {...link} />)}
+                    {links.map((link, i) => {
+                        if (link.onlyAdmin && !isAdmin) return null
+                        return <NavbarItem key={i} text={link.text} href={link.href} />
+                    }
+                    )}
                 </motion.div>
                 <div className='flex-1 flex justify-end items-center'>
                     <UserBtn />
