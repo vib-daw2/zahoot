@@ -1,7 +1,7 @@
 import useQuestion, { Question } from '@/hooks/useQuestion'
 import { FormattedQuestion, unformatQuestion } from '@/utils/sets/create'
 import { CopyIcon, Loader2Icon, MessageCircleQuestion, PencilIcon, PlayIcon, Trash2Icon, XIcon } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
@@ -10,14 +10,8 @@ import { getSetByIdResponse } from '~/types/routes/sets/getSetByIdResponse'
 const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
     console.log({ set })
     const { setQuestions } = useQuestion()
-    const navigate = useNavigate()
     const formattedQuestions = set.questions.map(x => unformatQuestion(x as FormattedQuestion))
 
-    const copySet = (action: string) => {
-        setQuestions(formattedQuestions)
-        navigate(action)
-    }
-    // TODO Usar el parametro id para mostrar las preguntas de dentro del set o algo asi
     return (
         <div className='w-full h-fit border border-slate-800 rounded-md flex flex-col group'>
             <div className='h-36 bg-slate-900/80 flex rounded-t-md justify-center items-center text-white'>
@@ -28,32 +22,7 @@ const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
                     <div className='font-zahoot  text-lg'>{set.name}</div>
                 </div>
                 <div className='pt-1 text-slate-300'>{set.description}</div>
-                <div className='h-fit w-full flex justify-end gap-3'>
-                    <div className='relative group/copy'>
-                        <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/copy:flex'>
-                            <div className='text-white'>Duplicate</div>
-                        </div>
-                        <button onClick={() => copySet('/create')} className='hover:bg-slate-950 p-2 rounded-md'>
-                            <CopyIcon className='w-4 h-4' />
-                        </button>
-                    </div>
-                    <div className='relative group/editar'>
-                        <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/editar:flex'>
-                            <div className='text-white'>Edit</div>
-                        </div>
-                        <button onClick={() => copySet(`/sets/${set.id}/edit`)} className='hover:bg-slate-950 p-2 rounded-md'>
-                            <PencilIcon className='w-4 h-4' />
-                        </button>
-                    </div>
-                    <div className='relative group/play'>
-                        <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/play:flex'>
-                            <div className='text-white'>Play</div>
-                        </div>
-                        <button className='hover:bg-slate-950 p-2 rounded-md'>
-                            <PlayIcon className='w-4 h-4' />
-                        </button>
-                    </div>
-                </div>
+                <SetOptions setQuestions={setQuestions} formattedQuestions={formattedQuestions} id={id} />
             </div>
         </div>
     )
@@ -61,10 +30,10 @@ const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
 
 const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (questions: Question[]) => void, formattedQuestions: Question[], id: number }) => {
     const navigate = useNavigate()
-
-    const copySet = () => {
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+    const copySet = (action: string) => {
         setQuestions(formattedQuestions)
-        navigate("/create")
+        navigate(action)
     }
 
     return (
@@ -73,15 +42,16 @@ const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (q
                 <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/borrar:flex'>
                     <div className='text-white'>Delete</div>
                 </div>
-                <button className='hover:bg-slate-950 p-2 rounded-md'>
+                <button className='hover:bg-slate-950 p-2 rounded-md' onClick={() => setOpenDeleteDialog(true)}>
                     <Trash2Icon className='w-4 h-4' />
+                    {openDeleteDialog && <DeleteSetDialog id={id} close={() => setOpenDeleteDialog(false)} />}
                 </button>
             </div>
             <div className='relative group/copy'>
                 <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/copy:flex'>
                     <div className='text-white'>Duplicate</div>
                 </div>
-                <button onClick={copySet} className='hover:bg-slate-950 p-2 rounded-md'>
+                <button className='hover:bg-slate-950 p-2 rounded-md' onClick={() => copySet('/create')}>
                     <CopyIcon className='w-4 h-4' />
                 </button>
             </div>
@@ -89,7 +59,7 @@ const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (q
                 <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/editar:flex'>
                     <div className='text-white'>Edit</div>
                 </div>
-                <button className='hover:bg-slate-950 p-2 rounded-md'>
+                <button onClick={() => copySet(`/sets/${id}/edit`)} className='hover:bg-slate-950 p-2 rounded-md'>
                     <PencilIcon className='w-4 h-4' />
                 </button>
             </div>
@@ -104,6 +74,40 @@ const SetOptions = ({ setQuestions, formattedQuestions, id }: { setQuestions: (q
         </div>
     )
 }
+
+const DeleteSetDialog = ({ id, close }: { id: number, close: () => void }) => {
+    const [cookies,] = useCookies(['accessToken'])
+    const navigate = useNavigate()
+
+    const deleteSet = async () => {
+        const res = await fetch(import.meta.env.VITE_API_URL + `/sets/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + cookies.accessToken
+            }
+        }).then(res => res.json())
+
+        if (res.success) {
+            close()
+        }
+    }
+
+    return (
+        <div className='fixed h-full w-full top-0 left-0 flex justify-center items-center bg-black/80 z-50'>
+            <div className='bg-slate-900 p-10 rounded-md'>
+                <div className='text-white'>Are you sure you want to delete this question set?</div>
+                <div className='flex justify-end gap-3 mt-4'>
+                    <button
+                        className='hover:bg-red-500 p-2 rounded-md transition-colors' onClick={deleteSet}>
+                        Yes
+                    </button>
+                    <button className='hover:bg-slate-950 p-2 rounded-md' onClick={() => navigate('/sets')}>No</button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 
 export default function Sets() {
     const [cookies,] = useCookies(['accessToken'])
