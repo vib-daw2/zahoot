@@ -11,9 +11,10 @@ export default function Play() {
     const [, setGameCode] = React.useState<number | null>(null)
     const [cookies,] = useCookies(['accessToken'])
     const navigation = useNavigate()
+    // TODO - implement playGame
     const playGame = async () => {
         setLoading(true)
-        const p1 = new Promise((resolve) => setTimeout(() => resolve('p1'), 5000))
+        const p1 = new Promise((resolve) => setTimeout(() => resolve('p1'), 1000))
         await p1
         setLoading(false)
         setGameCode(123456)

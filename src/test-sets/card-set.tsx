@@ -20,7 +20,7 @@ const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
                     <div className='font-zahoot  text-lg'>{set.name}</div>
                 </div>
                 <div className='pt-1 text-slate-300'>{set.description}</div>
-                <SetOptions setQuestions={setQuestions} formattedQuestions={formattedQuestions} id={id} />
+                <SetOptions setQuestions={setQuestions} formattedQuestions={formattedQuestions} id={id} name={set.name} />
             </div>
         </div>
     )
