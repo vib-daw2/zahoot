@@ -1,3 +1,5 @@
+import getDb from "../../prisma/db";
+
 type Player = {
     id: number;
     name: string;
@@ -16,50 +18,72 @@ class Game {
         this.players = [];
     }
 
-    // Returns the number of players in the game
-    public joinGame(name: string, socketId: string): number {
-        if (this.players.map(x => x.name).includes(name)){
-            this.players = this.players.filter(x => x.name !== name)
+    // Añade un jugador a la partida
+    public addPlayerToGame(playerName: string, socketId: string): number {
+        if (this.players.map(x => x.name).includes(playerName)) {
+            this.players = this.players.filter(x => x.name !== playerName)
         }
+        let id = this.players.length + 1;
         this.players.push({
-            id: this.players.length + 1,
+            id: id,
             socketId,
-            name
+            name: playerName
         });
-        return this.players.length;
+        return id;
     }
 }
 
-class Games {
+class GamePool {
 
+    // Partidas en curso
     private games: Game[];
 
     constructor() {
         this.games = [];
     }
 
-    // Returns the number of players in the game
+    // Añade un jugador a un juego. Crea el juego en caso de que no exista
+    // Devuele el ID del jugador
     public joinGame(gameId: string, name: string, socketId: string): number {
         let game = this.games.find(g => g.id === gameId);
-        if (!game) {
+        if (!game) { // En caso que no se haya creado el juego
+            // Comprobar si el game pin existe en la base de datos
+            let existsGameInDB = this.checkIfGamePinExistsInDatabase(gameId);
+            if (!existsGameInDB) {
+                return -1; // El game pin no existe
+            }
             game = new Game(gameId);
             this.games.push(game);
         }
-        return game.joinGame(name, socketId);
+        let id = game.addPlayerToGame(name, socketId);
+        return id;
     }
 
+    // Devuelve los jugadores de un juego
     public getPlayers(gameId: string): Player[] {
         let game = this.games.find(g => g.id === gameId);
         return game ? game.players : [];
     }
 
-    public leaveGame(gameId: string, socketId: string){
+    // Elimina un jugador de un juego
+    public leaveGame(gameId: string, socketId: string) {
         const game = this.games.find(x => x.id === gameId)
         if (!game) return
         game.players = game.players.filter(x => x.socketId !== socketId)
     }
+
+    // Comprueba si el game pin existe en la base de datos
+    private async checkIfGamePinExistsInDatabase(gamePin: string) {
+        const db = await getDb();
+        const game = await db.ongoingGame.findUnique({
+            where: {
+                gamePin,
+            },
+        });
+        return game !== null;
+    }
 }
 
-let running = new Games();
+let running = new GamePool();
 
 export default running;
