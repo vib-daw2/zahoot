@@ -23,15 +23,16 @@ model User {
 }
 
 model QuestionSet {
-  id          Int        @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
-  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ownerId     Int
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  isPublic    Boolean    @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  isPublic    Boolean       @default(false)
   Questions   Question[]
-  description String     @default("")
+  description String        @default("")
+  OngoingGame OngoingGame[]
 }
 
 model Question {
@@ -59,4 +60,14 @@ model Choice {
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   questionId Int
   isCorrect  Boolean  @default(false)
+}
+
+model OngoingGame {
+  id              Int         @id @default(autoincrement())
+  QuestionSet     QuestionSet @relation(fields: [questionSetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  questionSetId   Int
+  gamePin         String      @unique
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  currentQuestion Int         @default(0)
 }

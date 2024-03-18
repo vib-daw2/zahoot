@@ -16,6 +16,7 @@ class Game {
         this.players = [];
     }
 
+    // Returns the number of players in the game
     public joinGame(name: string, socketId: string): number {
         if (this.players.map(x => x.name).includes(name)){
             this.players = this.players.filter(x => x.name !== name)
@@ -37,6 +38,7 @@ class Games {
         this.games = [];
     }
 
+    // Returns the number of players in the game
     public joinGame(gameId: string, name: string, socketId: string): number {
         let game = this.games.find(g => g.id === gameId);
         if (!game) {
