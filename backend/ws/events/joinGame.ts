@@ -5,7 +5,6 @@ import getDb from "../../prisma/db";
 
 export default async function joinGame(data: string, socket: Socket) {
     const dataJ: { gameId: string, name: string } = JSON.parse(data);
-    console.log(running.getPlayers(dataJ.gameId).map(x => x.name).includes(dataJ.name))
 
     // Si el game pin no existe, emitir un mensaje de error y desconectar al usuario
     let exists = await checkIfGamePinExistsInDatabase(dataJ.gameId);
@@ -23,7 +22,6 @@ export default async function joinGame(data: string, socket: Socket) {
             participants: running.getPlayers(dataJ.gameId),
         }));
         socket.to(dataJ.gameId as string).emit("currentPlayers", JSON.stringify(running.getPlayers(dataJ.gameId).sort((a, b) => a.id - b.id)));
-        console.log(running.getPlayers(dataJ.gameId))
     }
 }
 

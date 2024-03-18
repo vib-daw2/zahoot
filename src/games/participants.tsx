@@ -136,17 +136,24 @@ export default function Participants({ }: Props) {
             navigate(`/games/${id}/test`)
         }
 
+        function forceDisconnect() {
+            socket.disconnect()
+            navigate('/')
+        }
+
         socket.on('connect', onConnect);
         socket.on('disconnect', onDisconnect);
         socket.on('joinedGame', onJoinedGame)
         socket.on("currentPlayers", onCurrentPlayers)
         socket.on('gameStart', onGameStart)
+        socket.on("gameDoesNotExist", forceDisconnect)
         return () => {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
             socket.off('joinedGame', onJoinedGame)
             socket.off("currentPlayers", onCurrentPlayers)
             socket.off('gameStart', onGameStart)
+            socket.off("gameDoesNotExist", forceDisconnect)
         };
     }, []);
 
