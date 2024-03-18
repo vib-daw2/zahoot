@@ -1,12 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
+
 import generalRouter from "./routes/general/router";
 import authRouter from "./routes/auth/router";
 import setsRouter from "./routes/sets/router";
 import questionsRouter from "./routes/questions/router";
-import cors from "cors";
-import http from "http";
-import { Server } from "socket.io";
+import gamesRouter from "./routes/games/router";
+
 import handleConnection from "./ws/handle";
 
 dotenv.config();
@@ -30,6 +33,7 @@ app.use("/api", generalRouter); // Ping (health check)
 app.use("/api/auth", authRouter); // Signup, login
 app.use("/api/sets", setsRouter); // Create, read, update, delete sets
 app.use("/api/questions", questionsRouter); // Create and update questions
+app.use("/api/games", gamesRouter); // Create and join games
 
 io.on("connection", handleConnection);
 
