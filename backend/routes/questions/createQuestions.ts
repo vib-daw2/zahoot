@@ -116,6 +116,14 @@ async function helperCreateQuestionsInSet(questions: TypeOf<typeof createQuestio
                     questionId: createdQuestion.id,
                 })),
             });
+
         }
-    });
+    },
+        {
+            maxWait: 10000,
+            timeout: 10000,
+            isolationLevel: "Serializable"
+        }
+
+    );
 }
