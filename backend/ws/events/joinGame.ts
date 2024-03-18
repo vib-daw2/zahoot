@@ -11,7 +11,7 @@ export default async function joinGame(data: string, socket: Socket) {
     let exists = await checkIfGamePinExistsInDatabase(dataJ.gameId);
     if (!exists) {
         console.log("Game does not exist")
-        socket.emit("gameDoesNotExist", JSON.stringify({ message: "Game does not exist" }));
+        socket.emit("forceDisconnect", JSON.stringify({ message: "Game does not exist" }));
         socket.disconnect();
         return;
     } else {
