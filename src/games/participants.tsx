@@ -180,21 +180,19 @@ export default function Participants({ }: Props) {
                 navigate('/')
             }
             const currentTime = Date.now();
-            if (
-                currentUser &&
-                participants.some(p => areColliding(p, currentUser) &&
-                    (participants.find(p => areColliding(p, currentUser))?.id !== lastCollidedUser?.id))) {
-                const collidedUser = participants.find(p => areColliding(p, currentUser))!
-                setLastCollidedUser(collidedUser)
-                setLastCollidedTime(currentTime)
-                toast.warning(`You got bonked by ${collidedUser.name}! 😵 Collision! 🚨`)
-            }
+            // if (
+            //     currentUser &&
+            //     participants.some(p => areColliding(p, currentUser) &&
+            //         (participants.find(p => areColliding(p, currentUser))?.id !== lastCollidedUser?.id))) {
+            //     const collidedUser = participants.find(p => areColliding(p, currentUser))!
+            //     setLastCollidedUser(collidedUser)
+            //     setLastCollidedTime(currentTime)
+            //     toast.warning(`You got bonked by ${collidedUser.name}! 😵 Collision! 🚨`)
+            // }
             if (socket.connected && currentUser && (currentTime - lastMoveTime) > 50) {
                 socket.emit('moveMouse', JSON.stringify({ gameId: id, id: currentUser.id, x: e.clientX, y: e.clientY }));
                 setCurrentUser({ ...currentUser, x: e.clientX, y: e.clientY });
                 lastMoveTime = currentTime; // Update lastMoveTime with the current time
-            } else {
-                console.log('not in range');
             }
         }
 
