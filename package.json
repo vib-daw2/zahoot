@@ -13,6 +13,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.18",
     "@hookform/resolvers": "^3.3.4",
+    "@million/lint": "^0.0.73",
     "@tabler/icons-react": "^2.47.0",
     "clsx": "^2.1.0",
     "framer-motion": "^10.18.0",
@@ -20,7 +21,7 @@
     "localforage": "^1.10.0",
     "lucide-react": "^0.309.0",
     "match-sorter": "^6.3.1",
-    "million": "^2.6.4",
+    "million": "^3.0.6",
     "react": "^18.2.0",
     "react-cookie": "^7.0.2",
     "react-dom": "^18.2.0",
