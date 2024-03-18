@@ -9,19 +9,36 @@ import { z } from 'zod';
 const customZodError: z.ZodErrorMap = (issue, ctx) => {
     if (issue.code === z.ZodIssueCode.invalid_string) {
         return { message: "Password must contain at least a number and a special character" }
+    } else if (z.ZodIssueCode.too_small) {
+        return { message: "Password must be at least 6 characters" }
+    }
+    return { message: ctx.defaultError }
+}
+
+const fieldZodError: z.ZodErrorMap = (issue, ctx) => {
+    if (issue.code === z.ZodIssueCode.too_small) {
+        return { message: "Field must be at least 5 character" }
+    } else if (issue.code === z.ZodIssueCode.too_big) {
+        return { message: "Field must be at most 255 characters" }
     }
     return { message: ctx.defaultError }
 }
 
 const signupRequestSchema = z.object({
-    name: z.string().min(1).max(255),
-    username: z.string().min(1).max(255),
+    name: z.string({
+        errorMap: fieldZodError
+    }).min(5).max(255),
+    username: z.string({
+        errorMap: fieldZodError
+    }).min(5).max(255),
     password: z.string(
         {
             errorMap: customZodError
         }
     ).min(6).max(255).regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,255}$/),
-    email: z.string().email().min(1).max(255),
+    email: z.string({
+        errorMap: fieldZodError
+    }).email().min(5).max(255),
 });
 
 
@@ -41,7 +58,7 @@ export default function Signup() {
                 headers: {
                     "Content-Type": "application/json"
                 }
-        })
+            })
             const data = await response.json()
             if (data.error) {
                 setError(data.message)
@@ -63,26 +80,26 @@ export default function Signup() {
             <div className='w-full'>
                 <div className='relative mx-auto w-full'>
                     <UserIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
-                    <input {...register("name")} type="text" className='pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b-slate-200 border-b focus:outline-none text-white' placeholder='name' />
+                    <input {...register("name")} type="text" className={` ${errors?.name ? "border-b-red-500" : "border-b-slate-200"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} placeholder='name' />
                 </div>
-                <p className='text-red-500'>{errors?.name?.message}</p>
+                <p className='text-red-500 text-sm'>{errors?.name?.message}</p>
             </div>
             <div className='w-full'>
                 <div className='relative mx-auto w-full'>
                     <AtSignIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
-                    <input {...register("username")} type="text" className='pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b-slate-200 border-b focus:outline-none text-white' placeholder='username' />
+                    <input {...register("username")} type="text" className={`pl-10 w-full font-zahoot py-1 px-2 bg-transparent ${errors?.username ? "border-b-red-500" : "border-b-slate-200"} border-b focus:outline-none text-white`} placeholder='username' />
                 </div>
-                <p className='text-red-500'>{errors?.username?.message}</p>
+                <p className='text-red-500 text-sm'>{errors?.username?.message}</p>
             </div>
             <div className='w-full'>
-            <div className='relative mx-auto w-full'>
-                <MailIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
-                <input 
-                    {...register("email")} 
-                    type="text" 
-                    className={`${errors?.email ? "border-b-red-500" : "border-b-slate-200"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} 
-                    placeholder='email' />
-            </div>
+                <div className='relative mx-auto w-full'>
+                    <MailIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
+                    <input
+                        {...register("email")}
+                        type="text"
+                        className={`${errors?.email ? "border-b-red-500" : "border-b-slate-200"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`}
+                        placeholder='email' />
+                </div>
                 <p className='text-red-500 text-sm'>{errors?.email?.message}</p>
             </div>
             <div className='w-full'>
@@ -90,8 +107,8 @@ export default function Signup() {
                     <LockIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
                     <input aria-invalid={errors?.password ? "true" : "false"} {...register("password")} type="password" className={`${errors?.password ? "border-b-red-500" : "border-b-slate-200"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} placeholder='password' />
                 </div>
-                    <p className='text-red-500 text-sm'>{errors?.password?.message}</p>
-                    <p className='text-red-500'>{error}</p>
+                <p className='text-red-500 text-sm'>{errors?.password?.message}</p>
+                <p className='text-red-500'>{error}</p>
             </div>
             <div className='flex flex-col gap-3 w-full'>
                 <button className='w-full bg-white hover:bg-slate-200 text-black font-zahoot uppercase font-bold tracking-widest py-2 rounded-md'>

@@ -60,19 +60,23 @@ export default function Navbar() {
         {
             text: 'Join',
             href: '/',
+            requiresAuth: false
         },
         {
             text: 'Create',
-            href: '/create'
+            href: '/create',
+            requiresAuth: true
         },
         {
             text: 'Sets',
             href: '/sets',
+            requiresAuth: true
         },
         {
             text: 'Admin',
             href: '/admin',
-            onlyAdmin: true
+            onlyAdmin: true,
+            requiresAuth: true
         }
     ]
 
@@ -85,7 +89,7 @@ export default function Navbar() {
                     initial="hidden"
                     animate="visible"
                     className='flex-1 gap-2 flex justify-center items-center '>
-                    {links.map((link, i) => {
+                    {links.filter(x => x.requiresAuth ? cookies.accessToken : true).map((link, i) => {
                         if (link.onlyAdmin && !isAdmin) return null
                         return <NavbarItem key={i} text={link.text} href={link.href} />
                     }
