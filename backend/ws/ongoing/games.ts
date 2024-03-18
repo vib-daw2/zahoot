@@ -69,13 +69,14 @@ class GamePool {
     }
 
     // Deja un juego
-    public leaveGame(gameId: string, socketId: string) {
+    public async leaveGame(gameId: string, socketId: string) {
         let game = this.games.find(g => g.id === gameId);
         if (game) {
             let player = game.players.find(p => p.socketId === socketId);
             if (player?.isHost) {
                 // Si el jugador que se va es el host, se elimina el juego
                 this.games = this.games.filter(g => g.id !== gameId);
+                await this.deleteGameOnDatabase(gameId);
                 return true;
             } else {
                 game.players = game.players.filter(p => p.socketId !== socketId);
@@ -93,6 +94,16 @@ class GamePool {
             },
         });
         return game !== null;
+    }
+
+    // Elimina un juego de la base de datos
+    private async deleteGameOnDatabase(gamePin: string) {
+        const db = await getDb();
+        await db.ongoingGame.delete({
+            where: {
+                gamePin,
+            },
+        });
     }
 }
 
