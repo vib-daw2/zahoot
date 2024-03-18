@@ -111,6 +111,7 @@ export default function Participants({ }: Props) {
 
         function onDisconnect() {
             setIsConnected(false);
+            navigate('/')
         }
 
         function onJoinedGame(data: string) {
@@ -126,6 +127,10 @@ export default function Participants({ }: Props) {
         function onCurrentPlayers(data: string) {
             console.log(data)
             const players = JSON.parse(data) satisfies Participant[] as Participant[]
+            if (players.length === 0) {
+                socket.disconnect()
+                navigate('/')
+            }
             setParticipants(players)
         }
 
@@ -137,6 +142,7 @@ export default function Participants({ }: Props) {
         }
 
         function forceDisconnect() {
+            console.log('force disconnect')
             socket.disconnect()
             navigate('/')
         }
@@ -146,14 +152,14 @@ export default function Participants({ }: Props) {
         socket.on('joinedGame', onJoinedGame)
         socket.on("currentPlayers", onCurrentPlayers)
         socket.on('gameStart', onGameStart)
-        socket.on("gameDoesNotExist", forceDisconnect)
+        socket.on("forceDisconnect", forceDisconnect)
         return () => {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
             socket.off('joinedGame', onJoinedGame)
             socket.off("currentPlayers", onCurrentPlayers)
             socket.off('gameStart', onGameStart)
-            socket.off("gameDoesNotExist", forceDisconnect)
+            socket.off("forceDisconnect", forceDisconnect)
         };
     }, []);
 
@@ -162,6 +168,9 @@ export default function Participants({ }: Props) {
         let lastMoveTime = Date.now();
 
         function sendMousePosition(e: MouseEvent) {
+            if (!socket.connected) {
+                navigate('/')
+            }
             const currentTime = Date.now();
             if (socket.connected && currentUser && (currentTime - lastMoveTime) > 50) {
                 socket.emit('moveMouse', JSON.stringify({ gameId: id, id: currentUser.id, x: e.clientX, y: e.clientY }));
@@ -230,7 +239,6 @@ export default function Participants({ }: Props) {
                     {copied ? <CheckCheckIcon size={24} /> : <CopyIcon size={24} />}
                 </button>
             </div>
-            <div>{lastMoveTime}</div>
             <div className='w-full flex justify-between max-w-6xl mt-4 px-8 border-b border-b-slate-600 py-4 border-t-slate-600 border-t items-center'>
                 <div className={`flex-1 text-light text-xl ${isAdmin ? "text-left" : "text-center"}`}>Players: {participants.length}/{maxParticipants}</div>
                 {isAdmin && <button onClick={() => socket.emit("gameStart", JSON.stringify({ gameId: id }))} className='py-2 px-2 w-[200px] text-cyan-900 bg-cyan-400 rounded-md font-medium flex justify-center items-center'>
