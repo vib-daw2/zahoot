@@ -1,7 +1,6 @@
 import { Socket } from "socket.io";
 
 import running from "../ongoing/games";
-import getDb from "../../prisma/db";
 
 export default async function joinGame(data: string, socket: Socket) {
     const dataJ: { gameId: string, name: string } = JSON.parse(data);
