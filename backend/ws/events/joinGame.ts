@@ -15,6 +15,7 @@ export default async function joinGame(data: string, socket: Socket) {
     }
 
     await socket.join(dataJ.gameId as string); // Unir al jugador a la sala de WS
+    console.log(`User ${id} joined game ${dataJ.gameId}`);
 
     // Devolvemos la información del juego al cliente
     socket.emit("joinedGame", JSON.stringify({

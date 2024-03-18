@@ -15,7 +15,7 @@ export default async function handleConnection(socket: Socket) {
     // Iniciar la partida
     socket.on("gameStart", (data: string) => {
         const { gameId }: { gameId: string } = JSON.parse(data);
-        console.log("game started");
+        console.log(`game ${gameId} started`);
         socket.to(gameId).emit("gameStart", JSON.stringify({ gameId }));
     })
 
