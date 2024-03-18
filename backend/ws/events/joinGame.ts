@@ -8,7 +8,7 @@ export default async function joinGame(data: string, socket: Socket) {
     console.log(running.getPlayers(dataJ.gameId).map(x => x.name).includes(dataJ.name))
 
     // Si el game pin no existe, emitir un mensaje de error y desconectar al usuario
-    let exists = await checkIfGamePinExists(dataJ.gameId);
+    let exists = await checkIfGamePinExistsInDatabase(dataJ.gameId);
     if (!exists) {
         console.log("Game does not exist")
         socket.emit("gameDoesNotExist", JSON.stringify({ message: "Game does not exist" }));
@@ -27,7 +27,7 @@ export default async function joinGame(data: string, socket: Socket) {
     }
 }
 
-async function checkIfGamePinExists(gamePin: string) {
+async function checkIfGamePinExistsInDatabase(gamePin: string) {
     const db = await getDb();
     const game = await db.ongoingGame.findUnique({
         where: {
