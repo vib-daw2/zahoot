@@ -8,17 +8,40 @@ import { getSetByIdResponse } from "../../backend/types/routes/sets/getSetByIdRe
 
 export default function Play() {
     const [loading, setLoading] = React.useState(false)
-    const [, setGameCode] = React.useState<number | null>(null)
     const [cookies,] = useCookies(['accessToken'])
+    const [selectedSet, setSelectedSet] = React.useState<string | null>(null)
+    const [error, setError] = React.useState<string | null>(null)
     const navigation = useNavigate()
-    // TODO - implement playGame
     const playGame = async () => {
         setLoading(true)
-        const p1 = new Promise((resolve) => setTimeout(() => resolve('p1'), 1000))
-        await p1
+        setError(null)
+        if (!selectedSet) {
+            setError('Please select a set to continue')
+            setLoading(false)
+            return
+        }
+        const response = await fetch(import.meta.env.VITE_API_URL + '/games/create', {
+            method: 'POST',
+            body: JSON.stringify({ questionSetId: parseInt(selectedSet) }),
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + cookies.accessToken
+            }
+        })
+        if (!response.ok) {
+            setError(`Error creating game - ${response.status} - ${response.statusText}`)
+            setLoading(false)
+            return
+        }
+        const { pin } = await response.json()
+        if (!pin) {
+            setError('Error creating game - no game pin returned')
+            setLoading(false)
+            return
+        }
         setLoading(false)
-        setGameCode(123456)
-        navigation(`/games/123456/participants`)
+        setError(null)
+        navigation(`/games/${pin}/participants`)
     }
 
     const fetchMySets = async () => {
@@ -33,11 +56,16 @@ export default function Play() {
 
     const { data, isLoading } = useQuery('mySets', fetchMySets)
 
+    React.useEffect(() => {
+        if (data && data.length) {
+            setSelectedSet(data[0].id.toString())
+        }
+    }, [data])
+
     return (
         <div className='w-full h-screen flex flex-col justify-center items-center'>
             <motion.div initial={{ scale: 0.2 }} animate={{ scale: 1 }} className='text-6xl mb-8 mt-2 font-bold font-zahoot text-white'>Zahoot!</motion.div>
             <div className='w-full max-w-lg flex flex-col gap-3'>
-                <div className='text-lg text-white mb-2'>Select a question set to get started</div>
                 {
                     isLoading
                         ? <div className='w-full text-white flex justify-center gap-3 items-center'>
@@ -46,7 +74,8 @@ export default function Play() {
                         </div>
                         : data && data.length
                             ? <>
-                                <select name="test" id="test" className='w-full p-2'>
+                                <div className='text-lg text-white mb-2'>Select a question set to get started</div>
+                                <select value={selectedSet ?? ""} onChange={v => setSelectedSet(v.currentTarget.value)} name="test" id="test" className='w-full p-2'>
                                     {data?.map((set) => (
                                         <option key={set.id} value={set.id}>
                                             {set.name}
@@ -69,6 +98,9 @@ export default function Play() {
                                             </div>
                                     }
                                 </button>
+                                {
+                                    error && <div className='text-red-500'>{error}</div>
+                                }
                             </>
                             :
                             <div>
@@ -79,7 +111,6 @@ export default function Play() {
                                         <div>Create a set to get started</div>
                                     </div>
                                 </Link>
-                                {/* <Link to={"/sets"}>Or use one from the community</Link> */}
                             </div>
                 }
 
