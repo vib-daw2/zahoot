@@ -3,7 +3,7 @@ import React from 'react'
 import useQuestion from '@/hooks/useQuestion'
 import SaveDialog from '@/components/set/save-dialog'
 import { useQuery } from 'react-query'
-import { useParams } from 'react-router-dom'
+import { redirect, useParams } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 import { FormattedQuestion, formatQuestion, unformatQuestion } from '@/utils/sets/create'
 
@@ -19,6 +19,10 @@ export default function UpdateQuestions({ action = "create" }: Props) {
     const { id } = useParams<{ id?: string }>()
     const [cookies,] = useCookies(['accessToken'])
     const { data, isLoading } = useQuery('questions', async () => {
+        if (!cookies.accessToken) {
+            redirect("/login")
+            return null
+        }
         if (action === "create") {
             return null
         }

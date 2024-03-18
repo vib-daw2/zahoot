@@ -1,4 +1,5 @@
 import { Question } from "@/hooks/useQuestion"
+import { redirect } from "react-router-dom"
 
 type CreateSetResponse = {
     success: boolean
@@ -49,6 +50,9 @@ export async function createSet(
             "Content-Type" : "application/json"
         }
     })
+    if (response.status === 401 || response.status === 403){
+        redirect("/login")
+    }
     if (!response.ok){
         return null
     }

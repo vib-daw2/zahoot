@@ -32,9 +32,12 @@ const router = createBrowserRouter(
         <Route path="/games/:id/participants" element={<Participants />} />
         <Route path="/games/:id/test" element={<Question />} />
         <Route path='/games/:id/leaderboard' element={<Leaderboard />} />
-        <Route path='/create' element={<UpdateQuestions action='create' />} />
+        <Route path='/sets/create' element={<UpdateQuestions action='create' />} />
         <Route path='/sets/:id/edit' element={<UpdateQuestions action='edit' />} />
-        <Route path='/sets' element={<Sets />} />
+        <Route
+          path='/sets'
+          element={<Sets />}
+        />
         <Route path='/settings' element={<Settings />} />
         <Route path='/play' element={<Play />} />
         <Route element={<LoginLayout />}>

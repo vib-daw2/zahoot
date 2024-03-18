@@ -64,7 +64,7 @@ export default function Navbar() {
         },
         {
             text: 'Create',
-            href: '/create',
+            href: '/sets/create',
             requiresAuth: true
         },
         {
