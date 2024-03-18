@@ -78,7 +78,7 @@ export default function UpdateQuestions({ action = "create" }: Props) {
                 <div className={`${questions.length > 25 ? "text-red-500" : ""} text-center py-1`}>{questions.length} / 25 Questions</div>
                 {
                     questions.map((question, index) => (
-                        <div onClick={() => setSelectedQuestion(index)} className={`text-gray-300 group w-full z-50 cursor-pointer relative hover:bg-gray-600 p-2 pr-6 rounded-md ${selectedQuestion === index ? "border border-gray-700 bg-gray-800" : ""}`} key={index}>
+                        <div onClick={() => setSelectedQuestion(index)} className={`text-gray-300 group w-full cursor-pointer relative hover:bg-gray-600 p-2 pr-6 rounded-md ${selectedQuestion === index ? "border border-gray-700 bg-gray-800" : ""}`} key={index}>
                             <div>{question.question.slice(0, 70)}{question.question.length > 70 && "..."}</div>
                             <button onClick={() => deleteQuestion(index)} className='hidden w-fit h-fit group-hover:block absolute top-2 right-2'>
                                 <XIcon className='w-6 h-6 text-red-500' />
@@ -88,7 +88,7 @@ export default function UpdateQuestions({ action = "create" }: Props) {
                 }
             </div>
             <SaveDialog defaultName={setName} defaultDescription={setDescription} id={id} />
-            {selectedQuestion !== null && <div className='ml-96 relative w-[calc(100%-24rem)] px-8 z-50 mx-auto h-screen flex flex-col gap-4 justify-center items-center'>
+            {selectedQuestion !== null && <div className='ml-96 relative w-[calc(100%-24rem)] px-8 mx-auto h-screen flex flex-col gap-4 justify-center items-center'>
                 <div className='mx-auto w-full flex flex-col justify-center items-center gap-3 max-w-3xl'>
 
                     <input
