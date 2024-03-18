@@ -40,6 +40,7 @@ export default function UserBtn() {
         localStorage.removeItem("ZAHOOT_ADMIN")
         setCookies("accessToken", null)
         setUser(null)
+        navigate('/login')
     }
 
     if (user) {
