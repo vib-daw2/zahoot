@@ -24,5 +24,5 @@ export default async function joinGame(data: string, socket: Socket) {
     }));
 
     // Mandamos a todos los jugadores la lista de jugadores actualizada
-    socket.to(dataJ.gameId as string).emit("currentPlayers", JSON.stringify(running.getPlayers(dataJ.gameId).sort((a, b) => a.id - b.id)));
+    socket.to(dataJ.gameId satisfies string as string).emit("currentPlayers", JSON.stringify(running.getPlayers(dataJ.gameId).sort((a, b) => a.id - b.id)));
 }

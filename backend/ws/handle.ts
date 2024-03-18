@@ -1,6 +1,8 @@
 import { Socket } from "socket.io";
 import joinGame from "./events/joinGame";
 import moveMouse from "./events/mouseMove";
+import { disconnect } from "process";
+import handleDisconnect from "./events/disconnect";
 
 // Este es el fichero encargado de manejar las conexiones y los juegos
 // que hay en marcha
@@ -33,6 +35,6 @@ export default async function handleConnection(socket: Socket) {
 
     // Desconexión
     socket.on("disconnect", () => {
-        console.log("User disconnected", socket.id);
+        handleDisconnect(socket);
     });
 }
