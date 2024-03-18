@@ -6,6 +6,7 @@ type Player = {
     socketId: string;
     x?: number;
     y?: number;
+    isHost?: boolean;
 }
 
 
@@ -19,7 +20,7 @@ class Game {
     }
 
     // Añade un jugador a la partida
-    public addPlayerToGame(playerName: string, socketId: string): number {
+    public addPlayerToGame(playerName: string, socketId: string, isHost?: boolean): number {
         if (this.players.map(x => x.name).includes(playerName)) {
             this.players = this.players.filter(x => x.name !== playerName)
         }
@@ -27,7 +28,8 @@ class Game {
         this.players.push({
             id: id,
             socketId,
-            name: playerName
+            name: playerName,
+            isHost: isHost,
         });
         return id;
     }
@@ -55,7 +57,8 @@ class GamePool {
             game = new Game(gameId);
             this.games.push(game);
         }
-        let id = game.addPlayerToGame(name, socketId);
+        let isHost = game.players.length === 0;
+        let id = game.addPlayerToGame(name, socketId, isHost);
         return id;
     }
 
@@ -65,11 +68,20 @@ class GamePool {
         return game ? game.players : [];
     }
 
-    // Elimina un jugador de un juego
+    // Deja un juego
     public leaveGame(gameId: string, socketId: string) {
-        const game = this.games.find(x => x.id === gameId)
-        if (!game) return
-        game.players = game.players.filter(x => x.socketId !== socketId)
+        let game = this.games.find(g => g.id === gameId);
+        if (game) {
+            let player = game.players.find(p => p.socketId === socketId);
+            if (player?.isHost) {
+                // Si el jugador que se va es el host, se elimina el juego
+                this.games = this.games.filter(g => g.id !== gameId);
+                return true;
+            } else {
+                game.players = game.players.filter(p => p.socketId !== socketId);
+                return false;
+            }
+        }
     }
 
     // Comprueba si el game pin existe en la base de datos
