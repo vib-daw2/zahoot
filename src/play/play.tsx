@@ -14,6 +14,7 @@ export default function Play() {
     const navigation = useNavigate()
     const playGame = async () => {
         setLoading(true)
+        setError(null)
         if (!selectedSet) {
             setError('Please select a set to continue')
             setLoading(false)
@@ -33,7 +34,13 @@ export default function Play() {
             return
         }
         const { pin } = await response.json()
+        if (!pin) {
+            setError('Error creating game - no game pin returned')
+            setLoading(false)
+            return
+        }
         setLoading(false)
+        setError(null)
         navigation(`/games/${pin}/participants`)
     }
 
