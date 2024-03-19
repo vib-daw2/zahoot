@@ -23,6 +23,9 @@ import Play from './play/play';
 import Leaderboard from './games/leaderboard';
 import NotFound from './notFound/notFound';
 import Settings from './settings/settings';
+import SettingsLayout from './layouts/settings-layout';
+import Profile from './settings/profile';
+import About from './settings/about';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -38,11 +41,15 @@ const router = createBrowserRouter(
           path='/sets'
           element={<Sets />}
         />
-        <Route path='/settings' element={<Settings />} />
         <Route path='/play' element={<Play />} />
         <Route element={<LoginLayout />}>
           <Route path='/login' element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+        </Route>
+        <Route element={<SettingsLayout />}>
+          <Route path='/settings' element={<Settings />} />
+          <Route path='/settings/profile' element={<Profile />} />
+          <Route path='/settings/about' element={<About />} />
         </Route>
         <Route path='*' element={<NotFound />} />
       </Route>
