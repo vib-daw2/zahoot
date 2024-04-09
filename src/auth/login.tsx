@@ -2,11 +2,12 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { AtSignIcon, LockIcon } from 'lucide-react'
 import React from 'react'
 import { useCookies } from 'react-cookie'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginRequestSchema } from "@/utils/schemas/auth"
 import { loginResponse } from "~/types/routes/auth/loginResponse"
+import { toast } from "sonner"
 
 export default function Login() {
     const [, setCookies] = useCookies()
@@ -14,6 +15,18 @@ export default function Login() {
     const { register, formState: { errors }, handleSubmit, watch } = useForm<z.infer<typeof loginRequestSchema>>({
         resolver: zodResolver(loginRequestSchema)
     })
+    const params = useSearchParams()
+
+    React.useEffect(() => {
+        if (params[0].get('action') === 'logout') {
+            console.log('logout')
+            toast.info('You have been logged out')
+        } else if (params[0].get('action') === 'signup') {
+            console.log('signup')
+            toast.success('Account created successfully. You can now login')
+        }
+        console.log({ params: params[0].get('action') })
+    }, [params])
 
     const onSubmit: SubmitHandler<z.infer<typeof loginRequestSchema>> = async (data) => {
         setError(null)
@@ -43,6 +56,7 @@ export default function Login() {
             }
         } catch (error) {
             console.error(error)
+            setError("An error occurred. Please try again later")
         }
     }
 

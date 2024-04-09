@@ -28,7 +28,7 @@ const SetOptions = ({ setQuestions, formattedQuestions, id, name }: Props) => {
                 <div className='absolute top-8 left-0 text-xs w-full justify-center items-center hidden group-hover/copy:flex'>
                     <div className='text-white'>Duplicate</div>
                 </div>
-                <button className='hover:bg-slate-950 p-2 rounded-md' onClick={() => copySet('/create')}>
+                <button className='hover:bg-slate-950 p-2 rounded-md' onClick={() => copySet('/sets/create')}>
                     <CopyIcon className='w-4 h-4' />
                 </button>
             </div>
