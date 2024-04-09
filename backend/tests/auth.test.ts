@@ -4,7 +4,7 @@ import getDb from "../prisma/db";
 describe("Auth process", () => {
 
     afterEach(async () => {
-        const db = await getDb();
+        const db = getDb();
         await db.user.deleteMany({
             where: {
                 username: "test"

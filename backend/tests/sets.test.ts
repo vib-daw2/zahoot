@@ -5,7 +5,7 @@ import { getSetByIdResponseSchema } from "../types/routes/sets/getSetByIdRespons
 describe("Sets CRUD should work", () => {
 
     afterEach(async () => {
-        const db = await getDb();
+        const db = getDb();
         await db.user.deleteMany({
             where: {
                 username: "test"
@@ -105,7 +105,7 @@ describe("Sets CRUD should work", () => {
 
         const token = login.data.token;
 
-        const db = await getDb();
+        const db = getDb();
 
         let notExists = true;
         let id = -1;
