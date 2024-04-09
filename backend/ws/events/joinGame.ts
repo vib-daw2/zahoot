@@ -1,18 +1,26 @@
 import { Socket } from "socket.io";
 
 import running from "../ongoing/games";
+import getDb from "../../prisma/db";
 
 export default async function joinGame(data: string, socket: Socket) {
     const dataJ: { gameId: string, name: string } = JSON.parse(data);
 
-    let id = running.joinGame(dataJ.gameId, dataJ.name, socket.id); // Añade el jugador al juego
+    // Comprobamos si el juego existe
+    const db = await getDb();
+    const exists = await db.ongoingGame.findFirst({
+        where: {
+            gamePin: dataJ.gameId,
+        }
+    }); 
 
-    // Si el id es -1, el juego no existe
-    if (id === -1) {
+    if (!exists) {
         socket.emit("forceDisconnect", JSON.stringify({ message: "Game does not exist" }));
         socket.disconnect();
         return;
     }
+
+    let id = running.joinGame(dataJ.gameId, dataJ.name, socket.id); // Añade el jugador al juego
 
     await socket.join(dataJ.gameId as string); // Unir al jugador a la sala de WS
     console.log(`User ${id} joined game ${dataJ.gameId}`);
