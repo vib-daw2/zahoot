@@ -6,9 +6,6 @@ import { CheckIcon, XIcon } from 'lucide-react'
 import React, { Dispatch, SetStateAction } from 'react'
 import { useParams } from 'react-router'
 
-type Props = {
-}
-
 const questionMotion = {
     hidden: { y: 20, opacity: 0 },
     visible: {
@@ -18,35 +15,31 @@ const questionMotion = {
     },
 }
 
-type SolutionItemProps = {
-    text: string,
-    ref?: React.Ref<HTMLDivElement>,
-    position: number,
-    isCorrect: boolean | null
-    solution: number
-    setSolution?: React.Dispatch<React.SetStateAction<number>>
+
+type ExamQuestion = {
+    question: string,
+    solutions: string[],
 }
 
-function Question({ num, solution, setSolution }: { num: number, solution: number, setSolution: Dispatch<SetStateAction<number>> }) {
+type QuestionProps = {
+    num: number,
+    question: ExamQuestion,
+    selectedOption: number,
+    setSelectedOption: React.Dispatch<React.SetStateAction<number>>,
+    isAdmin: boolean
+}
+
+function Question({ num, question: { question, solutions }, selectedOption, setSelectedOption, isAdmin }: QuestionProps) {
     console.log("reloading")
     const { id } = useParams()
-    const question = 'A company is planning to run a global marketing application in the AWS Cloud. The application will feature videos that can be viewed by users. The company must ensure that all users can view these videos with low latency.\nWhich AWS service should the company use to meet this requirement?'
-    const solutions = [
-        'A. AWS Auto Scaling',
-        'B. Amazon Kinesis Video Streams',
-        'C. Elastic Load Balancing',
-        'D. Amazon CloudFront']
+
     const correctSolution = 2
 
     const radioStyles = (n: number) => {
-        if (solution === -1) {
-            return 'w-8 h-8 bg-gray-200'
-        } else if (solution === n) {
-            if (correctSolution === n) {
-                return 'bg-emerald-500 w-7 h-7 min-w-7 min-h-7 ring-offset-2 ring-2 ring-emerald-500'
-            } else {
-                return 'bg-red-500 w-7 h-7 min-w-7 min-h-7 ring-offset-2 ring-2 ring-red-500'
-            }
+        if (selectedOption === -1) {
+            return 'w-7 h-7 bg-gray-200 min-w-7 min-h-7'
+        } else if (selectedOption === n) {
+            return "ring-2 ring-gray-200 bg-gray-900 min-w-7 min-h-7"
         } else {
             return 'w-8 h-8 bg-gray-200 opacity-75'
         }
@@ -54,14 +47,10 @@ function Question({ num, solution, setSolution }: { num: number, solution: numbe
 
     const radioDivStyles = (n: number) => {
         let baseClass = 'flex flex-row text-lg gap-4  px-3 rounded-full py-2'
-        if (solution === -1) {
+        if (selectedOption === -1) {
             return baseClass + ' hover:bg-gray-600 cursor-pointer'
-        } else if (solution === n) {
-            if (correctSolution === n) {
-                return baseClass + ' bg-emerald-500'
-            } else {
-                return baseClass + ' bg-red-500'
-            }
+        } else if (selectedOption === n) {
+            return baseClass + "ring ring-2 ring-gray-200 bg-gray-900 cursor-pointer py-1"
         } else {
             return baseClass + ' text-gray-600'
         }
@@ -73,9 +62,9 @@ function Question({ num, solution, setSolution }: { num: number, solution: numbe
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ ease: "easeInOut" }}
-            className='w-2/3 h-screen mx-auto flex flex-row justify-between items-center text-white'
+            className='xl:w-2/3 lg:w-3/4 w-5/6  min-h-screen h-full mx-auto flex md:flex-row flex-col md:justify-between justify-center items-center text-white'
         >
-            <div className='flex-1 p-4'>
+            <div className='md:flex-1 p-4'>
                 <div className='uppercase text-sm text-gray-500 text-left'>Question {num}</div>
                 <div className='text-xl'>{question}</div>
             </div>
@@ -83,19 +72,18 @@ function Question({ num, solution, setSolution }: { num: number, solution: numbe
                 variants={containerMotion}
                 initial="hidden"
                 animate="visible"
-                className='flex border-l border-l-gray-500 flex-col p-4 flex-1 gap-2'>
+                className='flex md:border-l md:border-l-gray-500 md:border-t-0 border-t border-t-gray-500 flex-col p-4 md:flex-1 gap-2 md:w-fit w-full min-w-fit'>
                 {
                     solutions.map((item, n) => (
                         <motion.label
-                            onClick={() => solution === -1 && setSolution && setSolution(n)}
+                            onClick={() => selectedOption === -1 && !isAdmin && setSelectedOption && setSelectedOption(n)}
                             variants={itemMotion}
                             transition={{ duration: .25 }}
                             htmlFor={`q${n}`}
                             key={item}
                             className={radioDivStyles(n)}>
                             <div className={`rounded-full flex justify-center items-center ${radioStyles(n)}`}>
-                                {solution === n && n == correctSolution && <CheckIcon className='text-white' />}
-                                {solution === n && n != correctSolution && <XIcon className='text-white' />}
+                                {selectedOption === n && <CheckIcon className='text-white' />}
                             </div>
                             <label htmlFor={`q${n}`}>{item}</label>
                         </motion.label>
@@ -106,11 +94,13 @@ function Question({ num, solution, setSolution }: { num: number, solution: numbe
     )
 }
 
-export default function Exam() {
+type Props = {
+    isAdmin: boolean
+}
+
+export default function Exam({ isAdmin }: Props) {
     const [solution, setSolution] = React.useState(-1)
     const [questionNumber, setQuestionNumber] = React.useState(1)
-    const [isLoading, setIsLoading] = React.useState(false);
-    const { username, setUsername } = useUsername()
     const { id } = useParams<{ id: string }>()
 
     React.useEffect(() => {
@@ -127,37 +117,22 @@ export default function Exam() {
         }
     }, [])
 
-    React.useEffect(function joinGameWithSocket() {
-        socket.emit('joinGame', JSON.stringify({ gameId: id, name: username }));
-        console.log(socket.id)
-    }, [socket, id, username])
-
     React.useEffect(function resolveQuestion() {
         if (solution != -1) {
             socket.emit('solution', JSON.stringify({ gameId: id, questionId: questionNumber, solution, userId: 1 }))
         }
     }, [solution])
 
-
-    // React.useEffect(() => {
-    //     async function nextQuestion() {
-    //         await delay(4000)
-    //         setIsLoading(true)
-    //         await delay(500)
-    //         if (solution != -1) {
-    //             setQuestionNumber(i => i + 1)
-    //             setSolution(-1)
-    //             setIsLoading(false)
-    //         }
-    //     }
-    //     if (solution != -1) {
-    //         nextQuestion()
-    //     }
-    // }, [solution]);
+    const question = 'A company is planning to run a global marketing application in the AWS Cloud. The application will feature videos that can be viewed by users. The company must ensure that all users can view these videos with low latency.\nWhich AWS service should the company use to meet this requirement?'
+    const solutions = [
+        'A. AWS Auto Scaling',
+        'B. Amazon Kinesis Video Streams',
+        'C. Elastic Load Balancing',
+        'D. Amazon CloudFront']
 
     return (
         <AnimatePresence mode='wait'>
-            {!isLoading && <Question num={questionNumber} solution={solution} setSolution={setSolution} />}
+            <Question isAdmin={isAdmin} num={questionNumber} selectedOption={solution} question={{ question, solutions }} setSelectedOption={setSolution} />
         </AnimatePresence>
     )
 

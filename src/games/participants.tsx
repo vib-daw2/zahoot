@@ -9,18 +9,13 @@ import { socket } from '@/lib/socket';
 import { useUsername } from '@/hooks/useUsername';
 import { z } from 'zod';
 import { Toaster, toast } from 'sonner';
+import { Participant } from '@/utils/schemas/participants';
 
 type Props = {
-    startGame: () => void
+    startGame: () => void,
+    isAdmin: boolean
 }
-const participantSchema = z.object({
-    id: z.number(),
-    name: z.string(),
-    x: z.number().optional(),
-    y: z.number().optional(),
-})
 
-type Participant = z.infer<typeof participantSchema>
 
 const ParticipantMouse = ({ participant: { x, y, name } }: { participant: Participant }) => {
     const mouseRef = React.useRef<HTMLDivElement>(null)
@@ -95,9 +90,8 @@ const ParticipantCard = React.memo(({ name, isAdmin, remove }: { name: string, i
     return prevProps.name === nextProps.name
 })
 
-export default function Participants({ startGame }: Props) {
+export default function Participants({ startGame, isAdmin }: Props) {
     const maxParticipants = 100
-    const [isAdmin, setIsAdmin] = React.useState(false)
     const [participants, setParticipants] = React.useState<Participant[]>([])
     const [copied, setCopied] = React.useState(false)
     const params = useParams()
@@ -119,9 +113,6 @@ export default function Participants({ startGame }: Props) {
         function onJoinedGame(data: string) {
             const { currentUser: user, participants }: { currentUser: Participant, participants: Participant[] } = JSON.parse(data)
             console.log({ user, participants })
-            if (user.id === 1) {
-                setIsAdmin(true)
-            }
             setCurrentUser(user)
             setParticipants(participants)
         }
