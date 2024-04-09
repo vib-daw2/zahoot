@@ -19,6 +19,7 @@ export default async function handleConnection(socket: Socket) {
         const { gameId }: { gameId: string } = JSON.parse(data);
         console.log(`game ${gameId} started`);
         socket.broadcast.to(gameId).emit("gameStart", JSON.stringify({ gameId }));
+        socket.send("gameStart", JSON.stringify({ gameId }));
     })
 
     // Mover el ratón
