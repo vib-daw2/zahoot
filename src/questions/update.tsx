@@ -26,7 +26,7 @@ export default function UpdateQuestions({ action = "create" }: Props) {
         if (action === "create") {
             return null
         }
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/sets/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL ?? "http://localhost:3000/api"}/sets/${id}`, {
             headers: {
                 "Authorization": `Bearer ${cookies.accessToken}`,
                 "Content-Type": "application/json"

@@ -148,7 +148,7 @@ export default function Home({ }: Props) {
                 </div>
                 {error && <div className='text-red-500 text-sm mt-2'>{error}</div>}
                 <div className='absolute bottom-2 left-0 w-full flex justify-center items-center'>
-                    <Link to={'/create'} className=' hover:underline text-white'>Create your own zahoot! <span className='font-bold'>here</span></Link>
+                    <Link to={'/src/create'} className=' hover:underline text-white'>Create your own zahoot! <span className='font-bold'>here</span></Link>
                 </div>
             </>
         </div >

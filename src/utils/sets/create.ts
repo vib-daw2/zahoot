@@ -42,7 +42,7 @@ export async function createSet(
     { name, description, token } : { name: string, description: string, token: string}
 ) : Promise<CreateSetResponse | null>
 {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/sets`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL ?? "http://localhost:3000/api"}/sets`, {
         method: "POST",
         body: JSON.stringify({ name, description }),
         headers: {
@@ -62,7 +62,7 @@ export async function createSet(
 export async function uploadQuestions({ id, questions, token } : { id: number, questions: Question[], token: string}): Promise<boolean>{
     const formattedQuestions = questions.map(formatQuestion)
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/questions/${id}`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL ?? "http://localhost:3000/api"}/questions/${id}`, {
         method: "POST",
         body: JSON.stringify({questions : formattedQuestions}),
         headers: {

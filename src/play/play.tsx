@@ -20,7 +20,7 @@ export default function Play() {
             setLoading(false)
             return
         }
-        const response = await fetch(import.meta.env.VITE_API_URL + '/games/create', {
+        const response = await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/games/create', {
             method: 'POST',
             body: JSON.stringify({ questionSetId: parseInt(selectedSet) }),
             headers: {
@@ -45,7 +45,7 @@ export default function Play() {
     }
 
     const fetchMySets = async () => {
-        const res = await fetch(import.meta.env.VITE_API_URL + '/sets/mine', {
+        const res = await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/sets/mine', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + cookies.accessToken
@@ -105,7 +105,7 @@ export default function Play() {
                             :
                             <div>
 
-                                <Link to={"/create"} className='w-full py-2 rounded-md bg-cyan-400 disabled:bg-cyan-700 disabled:text-cyan-400 flex flex-row items-center justify-center gap-2 text-cyan-900'>
+                                <Link to={"/sets/create"} className='w-full py-2 rounded-md bg-cyan-400 disabled:bg-cyan-700 disabled:text-cyan-400 flex flex-row items-center justify-center gap-2 text-cyan-900'>
                                     <div className='flex flex-row items-center gap-2'>
                                         <PlusIcon size={16} className=' fill-cyan-900' />
                                         <div>Create a set to get started</div>

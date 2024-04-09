@@ -10,7 +10,7 @@ const DeleteSetDialog = ({ id, name, questionNumber }: { id: number, name: strin
     const navigate = useNavigate()
 
     const deleteSet = async () => {
-        const res = await fetch(import.meta.env.VITE_API_URL + `/sets/${id}`, {
+        const res = await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + `/sets/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer ' + cookies.accessToken

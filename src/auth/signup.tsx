@@ -1,9 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AtSignIcon, LockIcon, MailIcon, UserIcon } from 'lucide-react'
-import React from 'react'
-import { useCookies } from 'react-cookie';
-import { SubmitHandler, set, useForm } from 'react-hook-form';
-import { Link, redirect, useNavigate } from 'react-router-dom'
+import { AtSignIcon, LockIcon, MailIcon, UserIcon } from 'lucide-react';
+import React from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 const customZodError: z.ZodErrorMap = (issue, ctx) => {
@@ -52,7 +51,7 @@ export default function Signup() {
     const onSubmit: SubmitHandler<z.infer<typeof signupRequestSchema>> = async (input) => {
         console.log(input)
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL ?? "http://localhost:3000/api"}/auth/signup`, {
                 method: "POST",
                 body: JSON.stringify(input),
                 headers: {
@@ -64,7 +63,7 @@ export default function Signup() {
                 setError(data.message)
             } else {
                 console.log(data)
-                navigation('/login')
+                navigation('/login?action=signup')
             }
         } catch (error) {
             setError('An error occurred. Please try again.')
