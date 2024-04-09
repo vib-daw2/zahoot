@@ -3,7 +3,7 @@ import getDb from "../../prisma/db";
 import { getSetByIdResponse } from "../../types/routes/sets/getSetByIdResponse";
 
 export async function handleGetMySets(req: Request, res: Response) {
-    const db = await getDb();
+    const db = getDb();
 
     const sets = await db.questionSet.findMany({
         select: {
@@ -38,7 +38,7 @@ export async function handleGetMySets(req: Request, res: Response) {
 }
 
 export async function handleGetSetById(req: Request, res: Response) {
-    const db = await getDb();
+    const db = getDb();
 
     if (!req.params.id) {
         return res.status(400).json({
@@ -123,7 +123,7 @@ export async function handleGetSetById(req: Request, res: Response) {
 }
 
 export async function handleHomePageSets(_req: Request, res: Response) {
-    const db = await getDb();
+    const db = getDb();
 
     const sets = await db.questionSet.findMany({
         select: {

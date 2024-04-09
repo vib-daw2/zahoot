@@ -16,7 +16,7 @@ export default async function handleSignup(req: Request, res: Response) {
         return res.status(400).json(response);
     }
 
-    const db = await getDb();
+    const db = getDb();
 
     if (await db.user.findFirst({
         where: {

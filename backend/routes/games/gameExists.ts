@@ -2,7 +2,7 @@ import getDb from "../../prisma/db";
 import { Request, Response } from "express";
 
 export default async function handleGameExists(req: Request, res: Response){
-    const db = await getDb();
+    const db = getDb();
     const { pin } = req.query
     if (!pin) {
         return res.status(400).json({ message: "Game pin is required" });

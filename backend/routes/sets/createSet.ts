@@ -4,7 +4,7 @@ import { createSetRequestSchema } from "../../types/routes/sets/createSetRequest
 import { createSetResponse } from "../../types/routes/sets/createSetResponse";
 
 export async function handleCreateQuestionSet(req: Request, res: Response) {
-    const db = await getDb();
+    const db = getDb();
 
     const validated = createSetRequestSchema.safeParse(req.body);
 

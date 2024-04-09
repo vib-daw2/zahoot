@@ -6,7 +6,7 @@ import { TypeOf } from 'zod';
 import { PrismaClient } from '@prisma/client';
 
 export async function handleCreateQuestions(req: Request, res: Response) {
-    const db = await getDb();
+    const db = getDb();
 
     // We validate the request body
     const validated = createQuestionsRequestSchema.safeParse(req.body);

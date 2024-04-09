@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 let db: PrismaClient;
 
-export default async function getDb() {
+export default function getDb() {
     if (!db) {
         db = new PrismaClient({
         });

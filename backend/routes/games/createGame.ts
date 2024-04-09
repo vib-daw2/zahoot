@@ -3,7 +3,7 @@ import getDb from "../../prisma/db";
 import { createGameRequestSchema } from "../../types/routes/games/createGameRequest";
 
 export default async function handleCreateGame(req: Request, res: Response) {
-    const db = await getDb();
+    const db = getDb();
 
     // We validate the request body
     const validated = createGameRequestSchema.safeParse(req.body);

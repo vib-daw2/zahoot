@@ -3,7 +3,7 @@ import getDb from "../../prisma/db";
 import { deleteSetResponse } from "../../types/routes/sets/deleteSetResponse";
 
 export async function handleDeleteQuestionSet(req: Request, res: Response) {
-    const db = await getDb();
+    const db = getDb();
 
     const set = await db.questionSet.findUnique({
         where: {

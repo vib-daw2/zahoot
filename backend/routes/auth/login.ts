@@ -17,7 +17,7 @@ export default async function handleLogin(req: Request, res: Response) {
         return res.status(400).json(response);
     }
 
-    const db = await getDb();
+    const db = getDb();
 
     const user = await db.user.findFirst({
         where: {
