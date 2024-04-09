@@ -36,7 +36,6 @@ class Game {
 }
 
 class GamePool {
-
     // Partidas en curso
     private games: Game[];
 
@@ -48,17 +47,15 @@ class GamePool {
     // Devuele el ID del jugador
     public joinGame(gameId: string, name: string, socketId: string): number {
         let game = this.games.find(g => g.id === gameId);
-        if (!game) { // En caso que no se haya creado el juego
-            // Comprobar si el game pin existe en la base de datos
-            let existsGameInDB = this.checkIfGamePinExistsInDatabase(gameId);
-            if (!existsGameInDB) {
-                return -1; // El game pin no existe
-            }
+
+        // En caso que no se haya creado el juego, se crea
+        if (!game) {
             game = new Game(gameId);
             this.games.push(game);
         }
-        let isHost = game.players.length === 0;
-        let id = game.addPlayerToGame(name, socketId, isHost);
+
+        // En caso de que el jugador ya esté en la partida, se elimina
+        let id = game.addPlayerToGame(name, socketId, game.players.length === 0);
         return id;
     }
 
