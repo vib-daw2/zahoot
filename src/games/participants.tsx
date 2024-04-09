@@ -103,9 +103,6 @@ export default function Participants({ }: Props) {
     const [currentUser, setCurrentUser] = React.useState<Participant | null>(null)
     const [isConnected, setIsConnected] = React.useState(socket.connected)
     const { id } = useParams<{ id: string }>()
-    const [lastMoveTime, setLastMoveTime] = React.useState(Date.now())
-    const [lastCollidedUser, setLastCollidedUser] = React.useState<Participant | null>(null)
-    const [lastCollidedTime, setLastCollidedTime] = React.useState(Date.now())
     const navigate = useNavigate()
     React.useEffect(() => {
         function onConnect() {
@@ -166,11 +163,6 @@ export default function Participants({ }: Props) {
         };
     }, []);
 
-    const areColliding = (a: Participant, b: Participant) => {
-        const distance = Math.sqrt(Math.pow(a.x! - b.x!, 2) + Math.pow(a.y! - b.y!, 2));
-        return distance < 50;
-    }
-
     React.useEffect(() => {
         // Initialize lastMoveTime with the current time when the component mounts
         let lastMoveTime = Date.now();
@@ -180,15 +172,6 @@ export default function Participants({ }: Props) {
                 navigate('/')
             }
             const currentTime = Date.now();
-            // if (
-            //     currentUser &&
-            //     participants.some(p => areColliding(p, currentUser) &&
-            //         (participants.find(p => areColliding(p, currentUser))?.id !== lastCollidedUser?.id))) {
-            //     const collidedUser = participants.find(p => areColliding(p, currentUser))!
-            //     setLastCollidedUser(collidedUser)
-            //     setLastCollidedTime(currentTime)
-            //     toast.warning(`You got bonked by ${collidedUser.name}! 😵 Collision! 🚨`)
-            // }
             if (socket.connected && currentUser && (currentTime - lastMoveTime) > 50) {
                 socket.emit('moveMouse', JSON.stringify({ gameId: id, id: currentUser.id, x: e.clientX, y: e.clientY }));
                 setCurrentUser({ ...currentUser, x: e.clientX, y: e.clientY });
