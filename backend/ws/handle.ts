@@ -11,8 +11,8 @@ export default async function handleConnection(socket: Socket) {
     console.log("User connected");
 
     // Unirse a un juego
-    socket.on("joinGame", (data: string) => {
-        joinGame(data, socket);
+    socket.on("joinGame", async (data: string) => {
+        await joinGame(data, socket);
     });
 
     // Iniciar la partida

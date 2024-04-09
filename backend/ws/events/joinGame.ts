@@ -7,7 +7,7 @@ export default async function joinGame(data: string, socket: Socket) {
     const dataJ: { gameId: string, name: string } = JSON.parse(data);
 
     // Comprobamos si el juego existe
-    const db = await getDb();
+    const db = getDb();
     const exists = await db.ongoingGame.findFirst({
         where: {
             gamePin: dataJ.gameId,
@@ -20,7 +20,7 @@ export default async function joinGame(data: string, socket: Socket) {
         return;
     }
 
-    let id = running.joinGame(dataJ.gameId, dataJ.name, socket.id); // Añade el jugador al juego
+    let id = await running.joinGame(dataJ.gameId, dataJ.name, socket.id); // Añade el jugador al juego
 
     await socket.join(dataJ.gameId as string); // Unir al jugador a la sala de WS
     console.log(`User ${id} joined game ${dataJ.gameId}`);

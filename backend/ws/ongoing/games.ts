@@ -9,14 +9,18 @@ type Player = {
     isHost?: boolean;
 }
 
+type Questions = {}
+
 
 class Game {
     public id: string;
     public players: Player[];
+    public questions: Questions[];
 
     constructor(id: string) {
         this.id = id;
         this.players = [];
+        this.questions = []
     }
 
     // Añade un jugador a la partida
@@ -45,12 +49,34 @@ class GamePool {
 
     // Añade un jugador a un juego. Crea el juego en caso de que no exista
     // Devuele el ID del jugador
-    public joinGame(gameId: string, name: string, socketId: string): number {
+    public async joinGame(gameId: string, name: string, socketId: string): Promise<number> {
         let game = this.games.find(g => g.id === gameId);
 
         // En caso que no se haya creado el juego, se crea
         if (!game) {
             game = new Game(gameId);
+            const questions = await (getDb()).ongoingGame.findMany({
+                select: {
+                    QuestionSet: {
+                        select: {
+                            Questions: {
+                                select: {
+                                    id: true,
+                                    question: true,
+                                    choices: true,
+                                }
+                                
+                            },
+                            id: true,
+                        }
+                    },
+                },
+                where: {
+                    gamePin: gameId
+                },
+            })
+            console.log(questions.flatMap(x => x.QuestionSet.Questions))
+            game.questions = questions
             this.games.push(game);
         }
 
@@ -84,7 +110,7 @@ class GamePool {
 
     // Comprueba si el game pin existe en la base de datos
     private async checkIfGamePinExistsInDatabase(gamePin: string) {
-        const db = await getDb();
+        const db = getDb();
         const game = await db.ongoingGame.findUnique({
             where: {
                 gamePin,
@@ -95,7 +121,7 @@ class GamePool {
 
     // Elimina un juego de la base de datos
     private async deleteGameOnDatabase(gamePin: string) {
-        const db = await getDb();
+        const db = getDb();
         await db.ongoingGame.delete({
             where: {
                 gamePin,
