@@ -26,15 +26,14 @@ import Settings from './settings/settings';
 import SettingsLayout from './layouts/settings-layout';
 import Profile from './settings/profile';
 import About from './settings/about';
+import Game from './games/game';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<RootLayout />}>
       <Route element={<HomeLayout />}>
         <Route path='/' element={<Home />} />
-        <Route path="/games/:id/participants" element={<Participants />} />
-        <Route path="/games/:id/test" element={<Question />} />
-        <Route path='/games/:id/leaderboard' element={<Leaderboard />} />
+        <Route path='/games/:id' element={<Game />} />
         <Route path='/sets/create' element={<UpdateQuestions action='create' />} />
         <Route path='/sets/:id/edit' element={<UpdateQuestions action='edit' />} />
         <Route

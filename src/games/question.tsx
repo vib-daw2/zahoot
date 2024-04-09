@@ -43,9 +43,9 @@ function Question({ num, solution, setSolution }: { num: number, solution: numbe
             return 'w-8 h-8 bg-gray-200'
         } else if (solution === n) {
             if (correctSolution === n) {
-                return 'bg-emerald-500 w-7 h-7 ring-offset-2 ring-2 ring-emerald-500'
+                return 'bg-emerald-500 w-7 h-7 min-w-7 min-h-7 ring-offset-2 ring-2 ring-emerald-500'
             } else {
-                return 'bg-red-500 w-7 h-7 ring-offset-2 ring-2 ring-red-500'
+                return 'bg-red-500 w-7 h-7 min-w-7 min-h-7 ring-offset-2 ring-2 ring-red-500'
             }
         } else {
             return 'w-8 h-8 bg-gray-200 opacity-75'
@@ -114,13 +114,6 @@ export default function Exam() {
     const { id } = useParams<{ id: string }>()
 
     React.useEffect(() => {
-        function onConnect() {
-            console.log('connected')
-        }
-
-        function onDisconnect() {
-            console.log('disconnected')
-        }
 
         function onNextQuestion() {
             console.log('next question')
@@ -128,12 +121,8 @@ export default function Exam() {
             setSolution(-1)
         }
 
-        socket.on('connect', onConnect)
-        socket.on('disconnect', onDisconnect)
         socket.on('nextQuestion', onNextQuestion)
         return () => {
-            socket.off('connect', onConnect)
-            socket.off('disconnect', onDisconnect)
             socket.off('nextQuestion', onNextQuestion)
         }
     }, [])

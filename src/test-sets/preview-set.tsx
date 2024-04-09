@@ -1,16 +1,23 @@
 import { Question } from '@/hooks/useQuestion';
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
-import { PlayIcon } from 'lucide-react'
+import { Loader2Icon, PlayIcon } from 'lucide-react'
 import React, { useRef } from 'react'
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 type Props = {
+    id: number;
     name: string;
     questions: Question[]
 }
 
-export default function PreviewSet({ name, questions }: Props) {
+export default function PreviewSet({ id, name, questions }: Props) {
     const [open, setOpen] = React.useState(false)
+    const [cookies, _] = useCookies(['accessToken'])
     const scrollRef = useRef<HTMLDivElement>(null)
+    const [loading, setLoading] = React.useState(false)
+    const navigation = useNavigate()
     const { scrollYProgress, ...x } = useScroll({
         container: scrollRef,
         layoutEffect: true,
@@ -28,6 +35,31 @@ export default function PreviewSet({ name, questions }: Props) {
             document.removeEventListener("keydown", () => { })
         }
     }, [])
+
+    const playGame = async () => {
+        setLoading(true)
+        const response = await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/games/create', {
+            method: 'POST',
+            body: JSON.stringify({ questionSetId: id }),
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + cookies.accessToken
+            }
+        })
+        if (!response.ok) {
+            toast.error(`Error creating game - ${response.status} - ${response.statusText}`)
+            setLoading(false)
+            return
+        }
+        const { pin } = await response.json()
+        if (!pin) {
+            toast.error('Error creating game - no game pin returned')
+            setLoading(false)
+            return
+        }
+        setLoading(false)
+        navigation(`/games/${pin}`)
+    }
 
     return (
         <>
@@ -62,9 +94,17 @@ export default function PreviewSet({ name, questions }: Props) {
                                         {questions.length} Questions
                                     </div>
                                 </div>
-                                <button className=' px-4 py-2 text-cyan-900 h-full flex justify-center gap-3 bg-cyan-400 hover:bg-cyan-500 rounded-md items-center'>
-                                    <PlayIcon className='w-6 h-6 fill-cyan-900' />
-                                    <div>Play</div>
+                                <button disabled={loading} onClick={playGame} className=' px-4 py-2 text-cyan-900 h-full flex justify-center gap-3 bg-cyan-400 hover:bg-cyan-500 rounded-md items-center'>
+                                    {loading
+                                        ? <>
+                                            <Loader2Icon className='w-6 h-6 animate-spin' />
+                                            <div>Creating...</div>
+                                        </>
+                                        : <>
+                                            <PlayIcon className='w-6 h-6 fill-cyan-900' />
+                                            <div>Play</div>
+                                        </>
+                                    }
                                 </button>
                             </div>
                             <motion.div style={{ scaleX: scrollYProgress }} className='h-1.5 rounded-full w-full max-w-7xl bg-cyan-400'></motion.div>

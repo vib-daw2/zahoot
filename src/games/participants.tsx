@@ -10,7 +10,9 @@ import { useUsername } from '@/hooks/useUsername';
 import { z } from 'zod';
 import { Toaster, toast } from 'sonner';
 
-type Props = {}
+type Props = {
+    startGame: () => void
+}
 const participantSchema = z.object({
     id: z.number(),
     name: z.string(),
@@ -93,7 +95,7 @@ const ParticipantCard = React.memo(({ name, isAdmin, remove }: { name: string, i
     return prevProps.name === nextProps.name
 })
 
-export default function Participants({ }: Props) {
+export default function Participants({ startGame }: Props) {
     const maxParticipants = 100
     const [isAdmin, setIsAdmin] = React.useState(false)
     const [participants, setParticipants] = React.useState<Participant[]>([])
@@ -138,7 +140,8 @@ export default function Participants({ }: Props) {
             const { gameId }: { gameId: string } = JSON.parse(data)
             if (gameId !== id) return
             console.log('game started')
-            navigate(`/games/${id}/test`)
+            startGame()
+            //navigate(`/games/${id}/test`)
         }
 
         function forceDisconnect() {

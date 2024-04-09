@@ -94,7 +94,7 @@ export default function Home({ }: Props) {
                 return
             }
             console.log('goNext')
-            navigate(`/games/${pin}/participants`)
+            navigate(`/games/${pin}`)
         } else {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/games/exists?pin=${pin}`, {
                 method: 'HEAD',

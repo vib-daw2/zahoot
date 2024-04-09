@@ -41,7 +41,7 @@ export default function Play() {
         }
         setLoading(false)
         setError(null)
-        navigation(`/games/${pin}/participants`)
+        navigation(`/games/${pin}`)
     }
 
     const fetchMySets = async () => {

@@ -40,7 +40,7 @@ const SetOptions = ({ setQuestions, formattedQuestions, id, name }: Props) => {
                     <PencilIcon className='w-4 h-4' />
                 </button>
             </div>
-            <PreviewSet name={name} questions={formattedQuestions} />
+            <PreviewSet id={id} name={name} questions={formattedQuestions} />
         </div>
     )
 }
