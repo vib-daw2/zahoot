@@ -83,7 +83,7 @@ export default function SaveDialog({ defaultName, defaultDescription, id }: Prop
 
     return (
         <>
-            <button onClick={() => setOpen(true)} className=' absolute top-16 gap-3 hover:bg-slate-800 right-10 text-cyan-400 border border-cyan-400 px-4 py-2 flex justify-center items-center rounded-md'>
+            <button onClick={() => setOpen(true)} className=' absolute top-16 z-[9999] gap-3 hover:bg-slate-800 right-10 text-cyan-400 border border-cyan-400 px-4 py-2 flex justify-center items-center rounded-md'>
                 <SaveIcon className=' text-cyan-400' />
                 <div>Save Set</div>
             </button>
