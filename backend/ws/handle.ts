@@ -3,6 +3,7 @@ import joinGame from "./events/joinGame";
 import moveMouse from "./events/mouseMove";
 import { disconnect } from "process";
 import handleDisconnect from "./events/disconnect";
+import io from "../server";
 
 // Este es el fichero encargado de manejar las conexiones y los juegos
 // que hay en marcha
@@ -18,8 +19,8 @@ export default async function handleConnection(socket: Socket) {
     socket.on("gameStart", (data: string) => {
         const { gameId }: { gameId: string } = JSON.parse(data);
         console.log(`game ${gameId} started`);
-        socket.broadcast.to(gameId).emit("gameStart", JSON.stringify({ gameId }));
-        socket.send("gameStart", JSON.stringify({ gameId }));
+        io.to(gameId).emit("gameStart", JSON.stringify({ gameId }));
+        //socket.send("gameStart", JSON.stringify({ gameId }));
     })
 
     // Mover el ratón
