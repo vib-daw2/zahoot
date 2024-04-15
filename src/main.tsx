@@ -34,6 +34,7 @@ const router = createBrowserRouter(
       <Route element={<HomeLayout />}>
         <Route path='/' element={<Home />} />
         <Route path='/games/:id' element={<Game />} />
+        <Route path='/leaderboard' element={<Leaderboard />} />
         <Route path='/sets/create' element={<UpdateQuestions action='create' />} />
         <Route path='/sets/:id/edit' element={<UpdateQuestions action='edit' />} />
         <Route

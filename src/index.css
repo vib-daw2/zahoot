@@ -4,3 +4,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* width and height for the track */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 12px;
+  }
+  
+  /* background of the track */
+  ::-webkit-scrollbar-track {
+    background: #222222;
+  }
+  
+  /* color of the scroll thumb */
+  ::-webkit-scrollbar-thumb {
+    background-color: #a4eaff;
+    border-radius: 6px;
+  }
+  
+  /* set of shadows to create a 3D effect */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+  
+  /* color of the scrollbar buttons (arrows) */
+  ::-webkit-scrollbar-button {
+    background-color: #cccccc00;
+    display: none
+  }
+  
+  /* the two buttons (up and down) at the ends of the scrollbar */
+  ::-webkit-scrollbar-button:start:decrement,
+  ::-webkit-scrollbar-button:end:increment {
+    display: none;
+  }

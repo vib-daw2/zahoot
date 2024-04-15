@@ -7,20 +7,34 @@ type Player = {
     x?: number;
     y?: number;
     isHost?: boolean;
+    points: number;
+    responses: boolean[];
 }
 
-type Questions = {}
+type Question = {
+    id: number;
+    question: string;
+    choices: QuestionChoice[];
+}
+
+type QuestionChoice = {
+    id: number;
+    choice: string;
+    isCorrect: boolean;
+}
 
 
 class Game {
     public id: string;
     public players: Player[];
-    public questions: Questions[];
+    public questions: Question[];
+    public currentQuestion: number;
 
     constructor(id: string) {
         this.id = id;
         this.players = [];
         this.questions = []
+        this.currentQuestion = 0;
     }
 
     // Añade un jugador a la partida
@@ -34,8 +48,24 @@ class Game {
             socketId,
             name: playerName,
             isHost: isHost,
+            points: 0,
+            responses: [],
         });
         return id;
+    }
+
+    public addResponse(playerId: number, response: number){
+        const player = this.players.find(x => x.id === playerId)
+        if (!player) return
+        const currentQuestion = this.questions[this.currentQuestion]
+        if (!currentQuestion) return
+        const correctAnswer = currentQuestion.choices[response]?.isCorrect
+        if (correctAnswer) {
+            player.points += 1
+            player.responses.push(true)
+        } else {
+            player.responses.push(false)
+        }
     }
 }
 
@@ -46,6 +76,31 @@ class GamePool {
     constructor() {
         this.games = [];
     }
+
+    public async addResponse(gameId: string, playerId: number, response: number) {
+        const game = this.games.find(x => x.id === gameId)
+        if (!game) return
+        game.addResponse(playerId, response)
+        console.log(game.players)
+    }
+
+    public getGame(gameId: string){
+        return this.games.find(x => x.id === gameId)
+    }
+
+    public nextQuestion(gameId: string) {
+        const game = this.games.find(x => x.id === gameId)
+        if (!game) return
+        game.currentQuestion += 1
+        return game.questions[game.currentQuestion]
+    }
+
+    public roundCompleted(gameId: string) {
+        const game = this.games.find(x => x.id === gameId)
+        if (!game) return false
+        const completed = game.players.filter(x => !x.isHost).every(x => x.responses.length === game.currentQuestion + 1)
+        return completed
+    }   
 
     // Añade un jugador a un juego. Crea el juego en caso de que no exista
     // Devuele el ID del jugador
@@ -63,7 +118,13 @@ class GamePool {
                                 select: {
                                     id: true,
                                     question: true,
-                                    choices: true,
+                                    choices: {
+                                        select: {
+                                            id: true,
+                                            choice: true,
+                                            isCorrect: true
+                                        }
+                                    },
                                 }
                                 
                             },
@@ -75,8 +136,15 @@ class GamePool {
                     gamePin: gameId
                 },
             })
-            console.log(questions.flatMap(x => x.QuestionSet.Questions))
-            game.questions = questions
+            game.questions = questions.flatMap(x => x.QuestionSet.Questions).map(x => ({
+                id: x.id,
+                question: x.question,
+                choices: x.choices.map(y => ({
+                    id: y.id,
+                    choice: y.choice,
+                    isCorrect: y.isCorrect
+            }))}))
+            
             this.games.push(game);
         }
 

@@ -25,8 +25,7 @@ export default function Login() {
             console.log('signup')
             toast.success('Account created successfully. You can now login')
         }
-        console.log({ params: params[0].get('action') })
-    }, [params])
+    }, [])
 
     const onSubmit: SubmitHandler<z.infer<typeof loginRequestSchema>> = async (data) => {
         setError(null)
