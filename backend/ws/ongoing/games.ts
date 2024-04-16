@@ -176,15 +176,11 @@ class GamePool {
         }
     }
 
-    // Comprueba si el game pin existe en la base de datos
-    private async checkIfGamePinExistsInDatabase(gamePin: string) {
-        const db = getDb();
-        const game = await db.ongoingGame.findUnique({
-            where: {
-                gamePin,
-            },
-        });
-        return game !== null;
+    // Devuelve el leaderboard de un juego
+    public getLeaderboard(gameId: string): Player[] {
+        let game = this.games.find(g => g.id === gameId);
+        // Devolvemos los jugadores ordenados por los puntos de la ronda anterior
+        return game ? game.players.sort((a, b) => b.responses.slice(0, b.responses.length - 1).reduce((acc, x) => acc + (x ? 100 : 0), 0) - a.responses.slice(0, a.responses.length - 1).reduce((acc, x) => acc + (x ? 1 : 0), 0)) : [];
     }
 
     // Elimina un juego de la base de datos

@@ -8,6 +8,7 @@ import { AddResponse } from "./events/question-response";
 import running from "./ongoing/games";
 import solution from "./events/solution";
 import nextQuestion from "./events/nextQuestion";
+import roundEnd from "./events/roundEnd";
 
 // Este es el fichero encargado de manejar las conexiones y los juegos
 // que hay en marcha
@@ -37,8 +38,14 @@ export default async function handleConnection(socket: Socket) {
         solution(data, socket);        
     })
 
+    // Cambiar de pregunta
     socket.on("nextQuestion", (data: string) => {
         nextQuestion(data, socket);
+    })
+
+    // Enviado por el admin para pasar mostrar el leaderboard
+    socket.on("roundEnd", (data: string) => {
+        roundEnd(data, socket);
     })
 
     // Desconexión
