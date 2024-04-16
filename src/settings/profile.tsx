@@ -9,16 +9,26 @@ export default function Profile() {
     const { register, formState: { errors } } = useForm()
     const [cookies,] = useCookies(['accessToken'])
 
-    // React.useEffect(() => {
-    //     setName(localStorage.getItem('ZAHOOT_NAME') || '')
-    //     setUsername(localStorage.getItem('ZAHOOT_USERNAME') || '')
-    // }, [])
-    const name = "Manolete"
-    const username = "manolete"
-    const email = "manolete@zahoot.com"
-
     // TODO: Endpoint to update user profile
     // TODO: Endpoint to get user profile
+
+    const name = "John Doe"
+    const username = "johndoe"
+    const email = "john@doe.e"
+
+    const handleUpdateProfile = async (data: { name: string, username: string, email: string }) => {
+        console.log(data)
+        await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies.accessToken}`
+            },
+            body: JSON.stringify(data)
+        }).then(res => res.json().then(data => {
+            console.log(data)
+        }))
+    }
 
     const fetchProfileStats = async () => {
         return await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/profile/stats', {
