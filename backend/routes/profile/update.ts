@@ -3,7 +3,7 @@ import getDb from '../../prisma/db';
 
 export default async function handleUpdate(req: Request, res: Response) {
     const db = getDb();
-    const { name, email, password } = req.body;
+    const { name, email, username } = req.body;
 
     // For each field that is not empty, update the user
     let existing = await db.user.findUnique({
@@ -23,7 +23,7 @@ export default async function handleUpdate(req: Request, res: Response) {
         data: {
             name: name || existing.name,
             email: email || existing.email,
-            password: password || existing.password,
+            username: username || existing.username,
         },
     });
 
