@@ -49,21 +49,14 @@ export async function handleCreateQuestions(req: Request, res: Response) {
         await helperCreateQuestionsInSet(questions, questionSet.id, db);
     }
 
-    // If the user wants to update the name or description
-    if (name) {
-        await db.questionSet.update({
-            where: { id: questionSet.id },
-            data: { name },
-        });
-    }
-
-    // If the user wants to update the description
-    if (description) {
-        await db.questionSet.update({
-            where: { id: questionSet.id },
-            data: { description },
-        });
-    }
+    // Update the name or the description if they are provided
+    await db.questionSet.update({
+        where: { id: questionSet.id },
+        data: { 
+            description: description || questionSet.description,
+            name: name || questionSet.name,
+        },
+    })
 
 
     // Return success
