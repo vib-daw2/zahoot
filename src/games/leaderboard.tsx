@@ -1,8 +1,8 @@
-import { socket } from '@/lib/socket'
+import { socket } from '@/lib/socket';
 import { Participant } from '@/utils/schemas/participants';
-import { AnimatePresence, LayoutGroup, Reorder, motion } from 'framer-motion';
+import { Reorder, motion } from 'framer-motion';
 import { ArrowRightIcon } from 'lucide-react';
-import React, { useRef } from 'react'
+import React from 'react';
 import { useParams } from 'react-router-dom';
 
 type Props = {}

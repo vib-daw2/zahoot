@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react'
+import React from 'react';
 
 type Props = {
     open: boolean;

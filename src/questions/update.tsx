@@ -1,11 +1,11 @@
-import { PlusIcon, SaveIcon, XIcon } from 'lucide-react'
+import { PlusIcon, XIcon } from 'lucide-react'
 import React from 'react'
 import useQuestion from '@/hooks/useQuestion'
 import SaveDialog from '@/components/set/save-dialog'
 import { useQuery } from 'react-query'
 import { redirect, useParams } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
-import { FormattedQuestion, formatQuestion, unformatQuestion } from '@/utils/sets/create'
+import { FormattedQuestion, unformatQuestion } from '@/utils/sets/create'
 
 type Props = {
     action: "edit" | "create"

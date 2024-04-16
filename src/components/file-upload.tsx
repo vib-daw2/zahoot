@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion, useDragControls } from "framer-motion"
+import { motion } from "framer-motion"
 
 
 type Props = {}

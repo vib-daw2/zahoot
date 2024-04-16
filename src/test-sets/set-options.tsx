@@ -1,11 +1,9 @@
 import { Question } from "@/hooks/useQuestion"
-import { CopyIcon, PencilIcon, PlayIcon, Trash2Icon } from "lucide-react"
-import { useState } from "react"
-import { useNavigate, useRevalidator } from "react-router-dom"
+import { CopyIcon, PencilIcon } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import DeleteSetDialog from "./delete-set-dialog"
 import React from "react"
 import PreviewSet from "./preview-set"
-import { AnimatePresence } from "framer-motion"
 
 type Props = {
     setQuestions: (questions: Question[]) => void

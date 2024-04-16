@@ -1,14 +1,12 @@
-import React from 'react'
-import { CheckCheckIcon, CopyCheckIcon, CopyIcon, PlayIcon, UserRound, XIcon } from 'lucide-react';
-import { AnimatePresence, motion, useMotionValue } from 'framer-motion';
-import { containerMotion, itemMotion } from '@/utils/motion';
-import { generateRandomInt, generateRandomString } from '@/utils/random';
+import React from 'react';
+import { CheckCheckIcon, CopyIcon, PlayIcon, UserRound, XIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { containerMotion } from '@/utils/motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FollowerPointerCard } from '@/components/ui/following-pointer';
 import { socket } from '@/lib/socket';
 import { useUsername } from '@/hooks/useUsername';
-import { z } from 'zod';
-import { Toaster, toast } from 'sonner';
+import { Toaster } from 'sonner';
 import { Participant } from '@/utils/schemas/participants';
 
 type Props = {

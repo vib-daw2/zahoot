@@ -1,4 +1,3 @@
-import Login from '@/auth/login'
 import { AnimatePresence } from 'framer-motion'
 import React from 'react'
 import { useCookies } from 'react-cookie'

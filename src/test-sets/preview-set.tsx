@@ -1,7 +1,7 @@
 import { Question } from '@/hooks/useQuestion';
-import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
-import { Loader2Icon, PlayIcon } from 'lucide-react'
-import React, { useRef } from 'react'
+import { AnimatePresence, motion, useScroll } from 'framer-motion';
+import { Loader2Icon, PlayIcon } from 'lucide-react';
+import React, { useRef } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';

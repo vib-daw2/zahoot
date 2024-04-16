@@ -1,6 +1,5 @@
-import useQuestion, { Question } from '@/hooks/useQuestion'
+import useQuestion from '@/hooks/useQuestion'
 import { createSet, uploadQuestions } from '@/utils/sets/create'
-import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2Icon, SaveIcon, XIcon } from 'lucide-react'
 import React from 'react'
 import { useCookies } from 'react-cookie'

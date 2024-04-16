@@ -1,9 +1,8 @@
 import { useUsername } from '@/hooks/useUsername';
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRightIcon, Loader2Icon } from 'lucide-react';
-import React from 'react'
-import { useCookies } from 'react-cookie';
-import { Link, redirect, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 type Props = {}
 
