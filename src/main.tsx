@@ -10,8 +10,6 @@ import {
 import RootLayout from './layouts/root-layout';
 import HomeLayout from './layouts/home-layout';
 import Home from './home/home';
-import Participants from './games/participants';
-import Question from './games/question';
 import UpdateQuestions from './questions/update';
 import Login from './auth/login';
 import Signup from './auth/signup';
