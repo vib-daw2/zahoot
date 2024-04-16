@@ -9,6 +9,7 @@ import authRouter from "./routes/auth/router";
 import setsRouter from "./routes/sets/router";
 import questionsRouter from "./routes/questions/router";
 import gamesRouter from "./routes/games/router";
+import profileRouter from "./routes/profile/router";
 
 import handleConnection from "./ws/handle";
 
@@ -34,6 +35,7 @@ app.use("/api/auth", authRouter); // Signup, login
 app.use("/api/sets", setsRouter); // Create, read, update, delete sets
 app.use("/api/questions", questionsRouter); // Create and update questions
 app.use("/api/games", gamesRouter); // Create and join games
+app.use("/api/profile", profileRouter); // Get user profile
 
 io.on("connection", handleConnection);
 

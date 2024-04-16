@@ -11,15 +11,16 @@ datasource db {
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
-  email       String        @unique
-  username    String        @unique
-  name        String
-  password    String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  isAdmin     Boolean       @default(false)
-  QuestionSet QuestionSet[]
+  id                Int           @id @default(autoincrement())
+  email             String        @unique
+  username          String        @unique
+  name              String
+  password          String
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  isAdmin           Boolean       @default(false)
+  createdGamesCount Int           @default(0)
+  QuestionSet       QuestionSet[]
 }
 
 model QuestionSet {

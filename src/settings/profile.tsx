@@ -1,43 +1,49 @@
-import { AtSignIcon, MailIcon, PencilIcon, SaveIcon, UploadIcon, UserRoundIcon } from 'lucide-react'
+import { AtSignIcon, MailIcon, PencilIcon, SaveIcon, Loader2Icon, UserRoundIcon, XIcon } from 'lucide-react'
 import React from 'react'
+import { useCookies } from 'react-cookie'
 import { useForm } from 'react-hook-form'
+import { useQuery } from 'react-query'
 
-type Props = {}
-
-export default function Profile({ }: Props) {
+export default function Profile() {
     const [isEditing, setIsEditing] = React.useState(false)
     const { register, formState: { errors } } = useForm()
-
-    // React.useEffect(() => {
-    //     setName(localStorage.getItem('ZAHOOT_NAME') || '')
-    //     setUsername(localStorage.getItem('ZAHOOT_USERNAME') || '')
-    // }, [])
-    const name = "Manolete"
-    const username = "manolete"
-    const email = "manolete@zahoot.com"
-
-    const sampleStats = [
-        {
-            title: "Sets created",
-            value: 10
-        },
-        {
-            title: "Games played",
-            value: 100
-        },
-        {
-            title: "Games won",
-            value: 50
-        },
-        {
-            title: "Games created",
-            value: 20
-        }
-    ]
+    const [cookies,] = useCookies(['accessToken'])
 
     // TODO: Endpoint to update user profile
     // TODO: Endpoint to get user profile
 
+    const name = "John Doe"
+    const username = "johndoe"
+    const email = "john@doe.e"
+
+    const handleUpdateProfile = async (data: { name: string, username: string, email: string }) => {
+        console.log(data)
+        await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies.accessToken}`
+            },
+            body: JSON.stringify(data)
+        }).then(res => res.json().then(data => {
+            console.log(data)
+        }))
+    }
+
+    const fetchProfileStats = async () => {
+        return await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/profile/stats', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies.accessToken}`
+            }
+        }).then(res => res.json().then(data => {
+            return [{ title: "Sets created", value: data.createdSetsCount },
+            { title: "Games created", value: data.createdGamesCount }]
+        }))
+    }
+
+    const { data: profileStats, isLoading: areProfileStatsLoading, error: errorLoadingProfileStats } = useQuery('profileStats', fetchProfileStats)
 
     return (
         <div className='flex flex-col h-full gap-6 w-full px-8'>
@@ -105,12 +111,27 @@ export default function Profile({ }: Props) {
                 <h2 className='text-xl font-zahoot'>Stats</h2>
                 <div className='w-full flex flex-row gap-12 mt-4 flex-wrap'>
                     {
-                        sampleStats.map((stat, i) => (
-                            <div key={i} className='flex flex-col gap-2 px-4 border-r last:border-r-0 w-[200px]'>
-                                <div className='text-5xl'>{stat.value}</div>
-                                <div className='text-sm text-slate-300'>{stat.title}</div>
+                        areProfileStatsLoading ?
+                            <div className='w-full flex justify-center items-center gap-3 mx-auto text-white'>
+                                <Loader2Icon className='w-8 h-8 animate-spin' />
+                                <div className=' font-zahoot text-3xl uppercase font-semibold animate-pulse'>Loading...</div>
                             </div>
-                        ))
+                            : profileStats
+                                ? profileStats.map((stat, index) => <div key={index} className='flex flex-col gap-2'>
+                                    <div className='text-2xl font-zahoot'>{stat.value}</div>
+                                    <div className='text-slate-400'>{stat.title}</div>
+                                </div>)
+                                : errorLoadingProfileStats
+                                    ? <div className='flex flex-col justify-center items-center h-[75vh]'>
+                                        <div className='flex justify-center items-center'>
+                                            <XIcon className='w-8 h-8 text-red-500' />
+                                            <div className='text-red-500 font-zahoot text-3xl uppercase font-semibold'>Error</div>
+                                        </div>
+                                        <div className=' text-red-200'>{(errorLoadingProfileStats as Error).message}</div>
+                                    </div>
+                                    : <div className='w-full flex flex-col justify-center items-center h-[75vh] text-lg text-white z-50'>
+                                        <div>No stats found</div>
+                                    </div>
                     }
                 </div>
             </div>
