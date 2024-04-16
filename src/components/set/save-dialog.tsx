@@ -15,7 +15,7 @@ type Props = {
 
 export default function SaveDialog({ defaultName, defaultDescription, id }: Props) {
     console.log({ defaultName, defaultDescription, id })
-    const { questions } = useQuestion()
+    const { questions, emptyQuestions } = useQuestion()
     const [cookie,] = useCookies(['accessToken'])
     const [open, setOpen] = React.useState(false)
     const [name, setName] = React.useState(defaultName)
@@ -83,10 +83,16 @@ export default function SaveDialog({ defaultName, defaultDescription, id }: Prop
 
     return (
         <>
-            <button onClick={() => setOpen(true)} className=' absolute top-16 z-[9999] gap-3 hover:bg-slate-800 right-10 text-cyan-400 border border-cyan-400 px-4 py-2 flex justify-center items-center rounded-md'>
-                <SaveIcon className=' text-cyan-400' />
-                <div>Save Set</div>
-            </button>
+            <div className='flex absolute top-16 z-[9999] gap-3 justify-end items-center right-10'>
+                <button onClick={emptyQuestions} className='gap-3 text-red-400 hover:bg-red-900/30 border border-red-400 px-4 py-2 flex justify-center items-center rounded-md'>
+                    <XIcon className=' text-red-400' />
+                    Reset Set
+                </button>
+                <button onClick={() => setOpen(true)} className=' z-[9999] gap-3 hover:bg-slate-800 text-cyan-400 border border-cyan-400 px-4 py-2 flex justify-center items-center rounded-md'>
+                    <SaveIcon className=' text-cyan-400' />
+                    <div>Save Set</div>
+                </button>
+            </div>
             <DialogContainer open={open} setOpen={setOpen}>
                 <input value={name} onChange={updateName} type="text" className={`w-full py-1 px- bg-transparent ${nameValid ? "border-b-slate-200" : "border-b-red-500"} border-b focus:outline-none text-white`} placeholder='Set Name' />
                 {!nameValid && <span className=' text-red-500'>Must have at least 5 characters</span>}

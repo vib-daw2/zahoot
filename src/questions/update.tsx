@@ -88,7 +88,7 @@ export default function UpdateQuestions({ action = "create" }: Props) {
                 }
             </div>
             <SaveDialog defaultName={setName} defaultDescription={setDescription} id={id} />
-            {selectedQuestion !== null && <div className='ml-96 relative w-[calc(100%-24rem)] px-8 mx-auto h-screen flex flex-col gap-4 justify-center items-center'>
+            {selectedQuestion !== null && questions[selectedQuestion] && <div className='ml-96 relative w-[calc(100%-24rem)] px-8 mx-auto h-screen flex flex-col gap-4 justify-center items-center'>
                 <div className='mx-auto w-full flex flex-col justify-center items-center gap-3 max-w-3xl'>
 
                     <input
