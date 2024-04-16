@@ -61,13 +61,22 @@ class Game {
         if (!player) return
         const currentQuestion = this.questions[this.currentQuestion]
         if (!currentQuestion) return
+        console.log(currentQuestion.choices, currentQuestion.choices[response], response, currentQuestion.choices.map(x => x.isCorrect))
         const correctAnswer = currentQuestion.choices[response]?.isCorrect
         if (correctAnswer) {
-            player.points += CORRECT_ANSWER_SCORE
+            // player.points += CORRECT_ANSWER_SCORE
             player.responses.push(true)
         } else {
             player.responses.push(false)
         }
+    }
+
+    public updateScores(){
+        console.log("Updating scores")
+        this.players.forEach(x => {
+            x.points = x.responses.reduce((acc, x) => acc + (x ? CORRECT_ANSWER_SCORE : 0), 0)
+        })
+        console.log(this.players.map(x => ({name: x.name, points: x.points, responses: x.responses})))
     }
 }
 
@@ -100,7 +109,7 @@ class GamePool {
     public roundCompleted(gameId: string) {
         const game = this.games.find(x => x.id === gameId)
         if (!game) return false
-        const completed = game.players.filter(x => !x.isHost).every(x => x.responses.length === game.currentQuestion + 1)
+        const completed = game.players.filter(x => !x.isHost && x.id !== 1).every(x => x.responses.length === game.currentQuestion + 1)
         return completed
     }   
 

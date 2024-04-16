@@ -42,9 +42,9 @@ function PlayerRank({ player, maxScore, score, setScore, rank }: { player: Playe
 
     React.useEffect(() => {
         const interval = setInterval(() => {
-            if (score <= player.points) {
+            if (score < player.points && player.points > 0) {
                 setScore(
-                    score + 100
+                    Math.min(player.points, score + 100)
                 )
             }
         }, 10);

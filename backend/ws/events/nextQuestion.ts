@@ -17,7 +17,6 @@ export default async function nextQuestion(data: string, socket: Socket) {
             io.to(gameId).emit("gameEnd")
             return
         }
-        console.log({ nextQuestion })
         io.to(gameId).emit("nextQuestion", JSON.stringify(nextQuestion))
     } else if (!roundCompleted && hasMoreQuestions) {
         const unanswered = running.getPlayers(gameId).filter(x => x.responses.length < game.currentQuestion)
@@ -31,7 +30,7 @@ export default async function nextQuestion(data: string, socket: Socket) {
             io.to(gameId).emit("gameEnd")
             return
         }
-        io.to(gameId).emit("nextQuestion", JSON.stringify(running.nextQuestion(gameId)))
+        io.to(gameId).emit("nextQuestion", JSON.stringify(nextQuestion))
     } else if (!hasMoreQuestions) {
         io.to(gameId).emit("gameEnd")
     }

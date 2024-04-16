@@ -1,19 +1,7 @@
-import { useUsername } from '@/hooks/useUsername'
-import { socket } from '@/lib/socket'
 import { containerMotion, itemMotion } from '@/utils/motion'
-import { AnimatePresence, motion, useAnimate } from 'framer-motion'
-import { ArrowRightIcon, CheckCheckIcon, CheckIcon, XIcon } from 'lucide-react'
-import React, { Dispatch, SetStateAction } from 'react'
-import { useParams } from 'react-router'
-
-const questionMotion = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-        y: 0,
-        opacity: 1,
-        rotate: [0, 3, -3, 0]
-    },
-}
+import { motion } from 'framer-motion'
+import { CheckCheckIcon, CheckIcon, XIcon } from 'lucide-react'
+import React from 'react'
 
 
 type ExamQuestion = {
@@ -93,6 +81,10 @@ export default function Question({ num, question: { question, solutions }, selec
         }
     }
 
+    React.useEffect(() => {
+        console.log({ selectedOption, status })
+    }, [selectedOption, status])
+
     return (
         <>
             <div className='md:flex-1 p-4'>
@@ -107,7 +99,7 @@ export default function Question({ num, question: { question, solutions }, selec
                 {
                     solutions.map((item, n) => (
                         <motion.label
-                            onClick={() => selectedOption === -1 && !isAdmin && setSelectedOption && setSelectedOption(n)}
+                            onClick={() => selectedOption === -1 && !isAdmin && setSelectedOption(n)}
                             variants={itemMotion}
                             transition={{ duration: .25 }}
                             htmlFor={`q${n}`}

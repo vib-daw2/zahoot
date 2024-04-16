@@ -18,6 +18,7 @@ export default function Game({ }: Props) {
     const [user, setUser] = React.useState<Participant | null>(null)
     const [players, setPlayers] = React.useState<Participant[]>([])
     const [question, setQuestion] = React.useState<GameQuestion | null>(null)
+    const [allResponded, setAllResponded] = React.useState(false)
 
     React.useEffect(() => {
         function onJoinedGame(data: string) {
@@ -41,6 +42,7 @@ export default function Game({ }: Props) {
             const question = JSON.parse(data) as GameQuestion
             setQuestion(question)
             setPhase("IN_GAME")
+            setAllResponded(false)
         }
 
         function onGameStart(data: string) {
@@ -51,16 +53,23 @@ export default function Game({ }: Props) {
             //navigate(`/games/${id}/test`)
         }
 
+        function onAllResponded() {
+            setAllResponded(true)
+        }
+
         socket.on('joinedGame', onJoinedGame)
         socket.on('roundEnd', onFinishRound)
         socket.on('nextQuestion', onNextQuestion)
         socket.on('gameStart', onGameStart)
         socket.on('gameEnd', () => setPhase("END"))
+        socket.on('allResponded', onAllResponded)
         return () => {
             socket.off('joinedGame', onJoinedGame)
             socket.off('roundEnd', onFinishRound)
             socket.off('nextQuestion', onNextQuestion)
             socket.off('gameStart', onGameStart)
+            socket.off('gameEnd')
+            socket.off('allResponded', onAllResponded)
         }
     }, [])
 
@@ -68,11 +77,11 @@ export default function Game({ }: Props) {
         case "LOBBY":
             return <Participants isAdmin={isAdmin} />
         case "IN_GAME":
-            return <Exam isAdmin={isAdmin} userId={user?.id} question={question} />
+            return <Exam allResponded={allResponded} isAdmin={isAdmin} userId={user?.id} question={question} />
         case "RESULTS":
-            return <Leaderboard initialPlayers={players} isAdmin={isAdmin} />
+            return <Leaderboard initialPlayers={players.filter(x => x.id !== 1)} isAdmin={isAdmin} />
         case "END":
-            return <Leaderboard initialPlayers={players} isAdmin={isAdmin} ended />
+            return <Leaderboard initialPlayers={players.filter(x => x.id !== 1)} isAdmin={isAdmin} ended />
         default:
             return null
     }
