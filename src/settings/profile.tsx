@@ -40,7 +40,9 @@ export default function Profile() {
         }).then(res => res.json().then(data => {
             return [{ title: "Sets created", value: data.createdSetsCount },
             { title: "Games created", value: data.createdGamesCount }]
-        }))
+        })).catch(err => {
+            throw new Error(`Error fetching profile stats from the server - ${err}`)
+        })  
     }
 
     const { data: profileStats, isLoading: areProfileStatsLoading, error: errorLoadingProfileStats } = useQuery('profileStats', fetchProfileStats)
@@ -122,12 +124,12 @@ export default function Profile() {
                                     <div className='text-slate-400'>{stat.title}</div>
                                 </div>)
                                 : errorLoadingProfileStats
-                                    ? <div className='flex flex-col justify-center items-center h-[75vh]'>
+                                    ? <div className='flex flex-col justify-center items-center w-full'>
                                         <div className='flex justify-center items-center'>
                                             <XIcon className='w-8 h-8 text-red-500' />
                                             <div className='text-red-500 font-zahoot text-3xl uppercase font-semibold'>Error</div>
                                         </div>
-                                        <div className=' text-red-200'>{(errorLoadingProfileStats as Error).message}</div>
+                                        <div className=' text-red-200 text-center'>{(errorLoadingProfileStats as Error).message}</div>
                                     </div>
                                     : <div className='w-full flex flex-col justify-center items-center h-[75vh] text-lg text-white z-50'>
                                         <div>No stats found</div>

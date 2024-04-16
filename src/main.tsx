@@ -10,8 +10,6 @@ import {
 import RootLayout from './layouts/root-layout';
 import HomeLayout from './layouts/home-layout';
 import Home from './home/home';
-import Participants from './games/participants';
-import Question from './games/question';
 import UpdateQuestions from './questions/update';
 import Login from './auth/login';
 import Signup from './auth/signup';
@@ -20,7 +18,6 @@ import { AnimatePresence } from 'framer-motion';
 import Sets from './test-sets/sets';
 import { CookiesProvider } from 'react-cookie';
 import Play from './play/play';
-import Leaderboard from './games/leaderboard';
 import NotFound from './notFound/notFound';
 import Settings from './settings/settings';
 import SettingsLayout from './layouts/settings-layout';
@@ -34,7 +31,6 @@ const router = createBrowserRouter(
       <Route element={<HomeLayout />}>
         <Route path='/' element={<Home />} />
         <Route path='/games/:id' element={<Game />} />
-        <Route path='/leaderboard' element={<Leaderboard />} />
         <Route path='/sets/create' element={<UpdateQuestions action='create' />} />
         <Route path='/sets/:id/edit' element={<UpdateQuestions action='edit' />} />
         <Route
