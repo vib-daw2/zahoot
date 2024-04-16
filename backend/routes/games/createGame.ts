@@ -24,6 +24,16 @@ export default async function handleCreateGame(req: Request, res: Response) {
         return res.status(404).json({ message: "Question set not found" });
     }
 
+    // Delete games created 24 hours ago
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    await db.ongoingGame.deleteMany({
+        where: {
+            createdAt: {
+                lte: twentyFourHoursAgo,
+            },
+        },
+    });
+
     // We generate a random game pin
     let gamePin = Math.floor(10000 + Math.random() * 90000).toString();
     let exists = true;
@@ -44,6 +54,18 @@ export default async function handleCreateGame(req: Request, res: Response) {
         data: {
             questionSetId,
             gamePin,
+        },
+    });
+
+    // Update createdGamesCount of the user by one
+    await db.user.update({
+        where: {
+            id: req.user!.id,
+        },
+        data: {
+            createdGamesCount: {
+                increment: 1,
+            },
         },
     });
 
