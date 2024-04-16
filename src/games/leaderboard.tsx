@@ -1,5 +1,7 @@
 import { socket } from '@/lib/socket'
+import { Participant } from '@/utils/schemas/participants';
 import { AnimatePresence, LayoutGroup, Reorder, motion } from 'framer-motion';
+import { ArrowRightIcon } from 'lucide-react';
 import React, { useRef } from 'react'
 import { useParams } from 'react-router-dom';
 
@@ -35,15 +37,14 @@ function generatePlayers(numPlayers: number, numResponses: number): Player[] {
     return players;
 }
 
-function PlayerRank({ player, maxScore, score, setScore }: { player: Player, maxScore: number, score: number, setScore: (score: number) => void }) {
+function PlayerRank({ player, maxScore, score, setScore, rank }: { player: Player, maxScore: number, score: number, setScore: (score: number) => void, rank: number }) {
     const duration = player.points * 800 / maxScore;
-    const motionRef = useRef<HTMLDivElement>(null)
 
     React.useEffect(() => {
         const interval = setInterval(() => {
-            if (score < player.points) {
+            if (score <= player.points) {
                 setScore(
-                    score + 50
+                    score + 100
                 )
             }
         }, 10);
@@ -59,20 +60,20 @@ function PlayerRank({ player, maxScore, score, setScore }: { player: Player, max
 
             <motion.div draggable={false} onAnimationEnd={() => endAnimation} key={player.name} initial={{ width: 0 }} animate={{ left: 0, width: [0, player.points * 800 / maxScore] }} transition={{ duration: duration / 1000 }}
                 className='bg-cyan-400/50 flex justify-between items-center rounded-r-md h-12 px-4 absolute inset-0'>
-                <div>{player.name}</div>
+                <div>{player.name} {rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : "💩"}</div>
                 <div>{score}</div>
             </motion.div>
         </div>
     )
 }
 
-const Leaderboard: React.FC = () => {
-    const [players, setPlayers] = React.useState<Player[]>([]);
+const Leaderboard = ({ initialPlayers, isAdmin, ended = false }: { initialPlayers: Participant[], isAdmin: boolean, ended?: boolean }) => {
+    const [players, setPlayers] = React.useState<Player[]>(initialPlayers as Player[]);
     const [scores, setScores] = React.useState<number[]>([]);
+    const { id } = useParams<{ id: string }>();
 
     React.useEffect(() => {
-        const players = generatePlayers(12, 25);
-        setPlayers(players);
+        setPlayers(initialPlayers as Player[]);
         setScores(Array(players.length).fill(0));
     }, []);
 
@@ -102,12 +103,14 @@ const Leaderboard: React.FC = () => {
     return (
         <div className='p-4 w-full h-screen flex justify-center items-center text-white flex-col'>
             <h1 className='text-4xl font-zahoot uppercase'>Leaderboard</h1>
+            {ended && <h2 className='text-2xl font-zahoot uppercase'>Game Over - <span className=' font-bold text-cyan-400'>{initialPlayers.find(x => x.points === Math.max(...players.map(p => (p.points ?? 0))))?.name}</span> Won!</h2>}
             <div className='flex flex-col justify-start items-start mt-2 max-h-[60vh] overflow-y-auto overflow-x-hidden pr-4'>
                 <Reorder.Group values={players.map(x => x.name)} onReorder={() => { }}>
                     {players.map((player, index) => (
                         <Reorder.Item key={player.name} value={player.name} className=' py-0.5'>
                             <PlayerRank
                                 player={player}
+                                rank={index + 1}
                                 maxScore={Math.max(...players.map(p => p.points))}
                                 score={scores[index]}
                                 setScore={score => updateScoreAndOrder(index, score)}
@@ -116,6 +119,12 @@ const Leaderboard: React.FC = () => {
                     ))}
                 </Reorder.Group>
             </div>
+            {isAdmin && !ended && <button onClick={() => socket.emit("nextQuestion", JSON.stringify({ gameId: id }))} className="w-full h-9 mt-4 max-w-lg mx-auto bg-cyan-400 text-cyan-900 hover:bg-cyan-300 rounded-md flex justify-center items-center gap-3">
+                <div>
+                    Next Question
+                </div>
+                <ArrowRightIcon size={24} />
+            </button>}
         </div>
     );
 };

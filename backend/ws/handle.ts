@@ -24,7 +24,11 @@ export default async function handleConnection(socket: Socket) {
     socket.on("gameStart", (data: string) => {
         const { gameId }: { gameId: string } = JSON.parse(data);
         console.log(`game ${gameId} started`);
-        io.to(gameId).emit("gameStart", JSON.stringify({ gameId }));
+        const game = running.getGame(gameId);
+        if (!game) return
+        game.currentQuestion = 0
+        const question = game.questions[game.currentQuestion]
+        io.to(gameId).emit("gameStart", JSON.stringify(question));
         //socket.send("gameStart", JSON.stringify({ gameId }));
     })
 

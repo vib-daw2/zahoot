@@ -12,7 +12,6 @@ import { Toaster, toast } from 'sonner';
 import { Participant } from '@/utils/schemas/participants';
 
 type Props = {
-    startGame: () => void,
     isAdmin: boolean
 }
 
@@ -90,7 +89,7 @@ const ParticipantCard = React.memo(({ name, isAdmin, remove }: { name: string, i
     return prevProps.name === nextProps.name
 })
 
-export default function Participants({ startGame, isAdmin }: Props) {
+export default function Participants({ isAdmin }: Props) {
     const maxParticipants = 100
     const [participants, setParticipants] = React.useState<Participant[]>([])
     const [copied, setCopied] = React.useState(false)
@@ -127,13 +126,7 @@ export default function Participants({ startGame, isAdmin }: Props) {
             setParticipants(players)
         }
 
-        function onGameStart(data: string) {
-            const { gameId }: { gameId: string } = JSON.parse(data)
-            if (gameId !== id) return
-            console.log('game started')
-            startGame()
-            //navigate(`/games/${id}/test`)
-        }
+
 
         function forceDisconnect() {
             console.log('force disconnect')
@@ -145,14 +138,12 @@ export default function Participants({ startGame, isAdmin }: Props) {
         socket.on('disconnect', onDisconnect);
         socket.on('joinedGame', onJoinedGame)
         socket.on("currentPlayers", onCurrentPlayers)
-        socket.on('gameStart', onGameStart)
         socket.on("forceDisconnect", forceDisconnect)
         return () => {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
             socket.off('joinedGame', onJoinedGame)
             socket.off("currentPlayers", onCurrentPlayers)
-            socket.off('gameStart', onGameStart)
             socket.off("forceDisconnect", forceDisconnect)
         };
     }, []);

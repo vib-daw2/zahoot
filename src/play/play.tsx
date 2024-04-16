@@ -5,6 +5,7 @@ import { useCookies } from 'react-cookie'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { getSetByIdResponse } from "../../backend/types/routes/sets/getSetByIdResponse"
+import Select from 'react-select'
 
 export default function Play() {
     const [loading, setLoading] = React.useState(false)
@@ -75,14 +76,15 @@ export default function Play() {
                         : data && data.length
                             ? <>
                                 <div className='text-lg text-white mb-2'>Select a question set to get started</div>
-                                <select value={selectedSet ?? ""} onChange={v => setSelectedSet(v.currentTarget.value)} name="test" id="test" className='w-full p-2'>
+                                {/* <select value={selectedSet ?? ""} onChange={v => setSelectedSet(v.currentTarget.value)} name="test" id="test" className='w-full p-2'>
                                     {data?.map((set) => (
                                         <option key={set.id} value={set.id}>
                                             {set.name}
                                         </option>
                                     ))
                                     }
-                                </select>
+                                </select> */}
+                                <Select name='test' id='test' className='w-full' onChange={v => setSelectedSet(v?.value ?? "")} options={data.map(set => ({ value: set.id.toString(), label: set.name }))} />
                                 <button disabled={loading} onClick={playGame} className='w-full py-2 rounded-md bg-cyan-400 disabled:bg-cyan-700 disabled:text-cyan-400 flex flex-row items-center justify-center gap-2 text-cyan-900'>
                                     {
                                         loading
