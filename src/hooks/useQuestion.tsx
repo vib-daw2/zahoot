@@ -15,6 +15,7 @@ interface QuestionState {
     updateQuestion: (index: number, question: Question) => void
     removeQuestion: (index: number) => void
     addQuestion: () => void
+    emptyQuestions: () => void
 }
 
 const useQuestion = create<QuestionState>()((set) => ({
@@ -33,7 +34,9 @@ const useQuestion = create<QuestionState>()((set) => ({
         const newQuestions = [...state.questions]
         newQuestions.splice(index, 1)
         return { ...state, questions: newQuestions }
-    })
+    }),
+
+    emptyQuestions: () => set((state) => ({ questions: [] }))
 }))
 
 export default useQuestion
