@@ -1,5 +1,7 @@
 import getDb from "../../prisma/db";
 
+const CORRECT_ANSWER_SCORE = 100
+
 type Player = {
     id: number;
     name: string;
@@ -61,7 +63,7 @@ class Game {
         if (!currentQuestion) return
         const correctAnswer = currentQuestion.choices[response]?.isCorrect
         if (correctAnswer) {
-            player.points += 1
+            player.points += CORRECT_ANSWER_SCORE
             player.responses.push(true)
         } else {
             player.responses.push(false)
