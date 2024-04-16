@@ -3,21 +3,31 @@ import React from 'react'
 import { useCookies } from 'react-cookie'
 import { useForm } from 'react-hook-form'
 import { useQuery } from 'react-query'
+import { toast } from 'sonner'
+
+type ProfileStatsForm = { name: string, username: string, email: string }
 
 export default function Profile() {
     const [isEditing, setIsEditing] = React.useState(false)
-    const { register, formState: { errors } } = useForm()
     const [cookies,] = useCookies(['accessToken'])
 
-    // TODO: Endpoint to update user profile
-    // TODO: Endpoint to get user profile
+    const getMyProfileInfo = async () => {
+        return await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/profile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies.accessToken}`
+            }
+        }).then(res => res.json().then(data => {
+            return data satisfies { name: string, username: string, email: string, isAdmin: boolean } as { name: string, username: string, email: string, isAdmin: boolean }
+        })).catch(err => {
+            throw new Error(`Error fetching profile from the server - ${err}`)
+        })
+    }
 
-    const name = "John Doe"
-    const username = "johndoe"
-    const email = "john@doe.e"
-
+    const [saving, setSaving] = React.useState(false)
     const handleUpdateProfile = async (data: { name: string, username: string, email: string }) => {
-        console.log(data)
+        setSaving(true)
         await fetch((import.meta.env.VITE_API_URL ?? "http://localhost:3000/api") + '/profile', {
             method: 'POST',
             headers: {
@@ -25,9 +35,18 @@ export default function Profile() {
                 'Authorization': `Bearer ${cookies.accessToken}`
             },
             body: JSON.stringify(data)
-        }).then(res => res.json().then(data => {
-            console.log(data)
-        }))
+        }).then(res => res.json().then(() => {
+            toast.success('Profile updated successfully')
+            localStorage.setItem("ZAHOOT_NAME", data.name)
+            localStorage.setItem("ZAHOOT_USERNAME", data.username)
+        })).catch(err => {
+            toast.error('Error updating profile')
+            throw new Error(`Error updating profile - ${err}`)
+        }).finally(() => {
+            setSaving(false)
+            setIsEditing(false)
+            fetchInfoAgain()
+        })
     }
 
     const fetchProfileStats = async () => {
@@ -42,27 +61,30 @@ export default function Profile() {
             { title: "Games created", value: data.createdGamesCount }]
         })).catch(err => {
             throw new Error(`Error fetching profile stats from the server - ${err}`)
-        })  
+        })
     }
 
-    const { data: profileStats, isLoading: areProfileStatsLoading, error: errorLoadingProfileStats } = useQuery('profileStats', fetchProfileStats)
+    const { register, formState: { errors }, handleSubmit } = useForm<ProfileStatsForm>()
+
+    const { data: profileStats, isLoading: areProfileStatsLoading, error: errorLoadingProfileStats } = useQuery('profileStats', fetchProfileStats, { refetchOnMount: false, refetchOnWindowFocus: false })
+    const { data: profileInfo, isLoading: isProfileInfoLoading, refetch: fetchInfoAgain } = useQuery('profileInfo', getMyProfileInfo, { refetchOnMount: false, refetchOnWindowFocus: false })
 
     return (
         <div className='flex flex-col h-full gap-6 w-full px-8'>
 
-            <form className='flex flex-col gap-4 text-white'>
+            <form className='flex flex-col gap-4 text-white' onSubmit={handleSubmit(handleUpdateProfile)}>
                 <h1 className='font-zahoot text-2xl'>Profile</h1>
                 <div className='flex flex-row items-center py-2'>
                     <div className='w-[150px]'>Name</div>
                     {isEditing
                         ? <div className='relative w-full max-w-md'>
                             <UserRoundIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
-                            <input {...register("name")} type="text" className={` ${errors?.name ? "border-b-red-500" : "border-b-slate-500"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} placeholder='name' />
+                            <input {...register("name")} type="text" className={` ${errors?.name ? "border-b-red-500" : "border-b-slate-500"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} placeholder='name' defaultValue={profileInfo?.name} />
                         </div>
                         : <div className='flex flex-row items-center gap-4'>
                             <UserRoundIcon className='w-6 h-6 text-slate-400' />
                             <div className='text-slate-400 flex flex-row gap-2 items-center font-zahoot '>
-                                {name}
+                                {isProfileInfoLoading ? "Loading..." : profileInfo?.name}
                             </div>
                         </div>}
                 </div>
@@ -71,12 +93,12 @@ export default function Profile() {
                     {isEditing
                         ? <div className='relative w-full max-w-md'>
                             <AtSignIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
-                            <input {...register("username")} type="text" className={` ${errors?.name ? "border-b-red-500" : "border-b-slate-500"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} placeholder='username' />
+                            <input {...register("username")} type="text" className={` ${errors?.name ? "border-b-red-500" : "border-b-slate-500"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} placeholder='username' defaultValue={profileInfo?.username} />
                         </div>
                         : <div className='flex flex-row items-center gap-4'>
                             <AtSignIcon className='w-6 h-6 text-slate-400' />
                             <div className='text-slate-400 flex flex-row gap-2 items-center font-zahoot '>
-                                {username}
+                                {isProfileInfoLoading ? "Loading..." : profileInfo?.username}
                             </div>
                         </div>}
                 </div>
@@ -86,23 +108,26 @@ export default function Profile() {
                         isEditing
                             ? <div className='relative w-full max-w-md'>
                                 <MailIcon size={20} className='text-slate-500 absolute top-1/2 left-2 transform -translate-y-1/2' />
-                                <input {...register("email")} type="text" className={` ${errors?.name ? "border-b-red-500" : "border-b-slate-500"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} placeholder='name' />
+                                <input {...register("email")} type="text" className={` ${errors?.name ? "border-b-red-500" : "border-b-slate-500"} pl-10 w-full font-zahoot py-1 px-2 bg-transparent border-b focus:outline-none text-white`} placeholder='email' defaultValue={profileInfo?.email} />
                             </div>
                             :
                             <div className='flex flex-row justify-start items-center gap-4'>
                                 <MailIcon className='w-6 h-6 text-slate-400' />
                                 <div className='text-slate-400 flex flex-row gap-2 items-center font-zahoot '>
-                                    {email}
+                                    {isProfileInfoLoading ? "Loading..." : profileInfo?.email}
                                 </div>
                             </div>}
                 </div>
                 <div className='flex flex-row justify-start items-center gap-4'>
                     {isEditing
-                        ? <button type='button' onClick={() => setIsEditing(false)} className='w-[200px] py-2 bg-cyan-400 text-cyan-950 rounded-md font-medium flex justify-center items-center gap-2'>
+                        ? <button type='submit' className='w-[200px] py-2 bg-cyan-400 text-cyan-950 rounded-md font-medium flex justify-center items-center gap-2'>
                             <SaveIcon className='w-6 h-6' />
-                            <div>Save Changes</div>
+                            <div>{saving ? 'Saving...' : 'Save'}</div>
                         </button>
-                        : <button type='button' onClick={() => setIsEditing(true)} className='w-[200px] py-2 border border-slate-700 hover:bg-slate-900 rounded-md font-medium flex justify-center items-center gap-2'>
+                        : <button type='button' onClick={(e) => {
+                            e.preventDefault()
+                            setIsEditing(true)
+                        }} className='w-[200px] py-2 border border-slate-700 hover:bg-slate-900 rounded-md font-medium flex justify-center items-center gap-2'>
                             <PencilIcon className='w-4 h-4' />
                             <div>Edit Profile</div>
                         </button>
