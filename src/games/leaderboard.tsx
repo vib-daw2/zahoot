@@ -105,19 +105,22 @@ const Leaderboard = ({ initialPlayers, isAdmin, ended = false }: { initialPlayer
             <h1 className='text-4xl font-zahoot uppercase'>Leaderboard</h1>
             {ended && <h2 className='text-2xl font-zahoot uppercase'>Game Over - <span className=' font-bold text-cyan-400'>{initialPlayers.find(x => x.points === Math.max(...players.map(p => (p.points ?? 0))))?.name}</span> Won!</h2>}
             <div className='flex flex-col justify-start items-start mt-2 max-h-[60vh] overflow-y-auto overflow-x-hidden pr-4'>
-                <Reorder.Group values={players.map(x => x.name)} onReorder={() => { }}>
-                    {players.map((player, index) => (
-                        <Reorder.Item key={player.name} value={player.name} className=' py-0.5'>
-                            <PlayerRank
-                                player={player}
-                                rank={index + 1}
-                                maxScore={Math.max(...players.map(p => p.points))}
-                                score={scores[index]}
-                                setScore={score => updateScoreAndOrder(index, score)}
-                            />
-                        </Reorder.Item>
-                    ))}
-                </Reorder.Group>
+                {players.reduce((acc, x) => x.points + acc, 0) === 0
+                    ? <div className='text-xl text-slate-300'>No players have scored yet 💩</div>
+                    : <Reorder.Group values={players.map(x => x.name)} onReorder={() => { }}>
+                        {players.map((player, index) => (
+                            <Reorder.Item key={player.name} value={player.name} className=' py-0.5'>
+                                <PlayerRank
+                                    player={player}
+                                    rank={index + 1}
+                                    maxScore={Math.max(...players.map(p => p.points))}
+                                    score={scores[index]}
+                                    setScore={score => updateScoreAndOrder(index, score)}
+                                />
+                            </Reorder.Item>
+                        ))}
+                    </Reorder.Group>
+                }
             </div>
             {isAdmin && !ended && <button onClick={() => socket.emit("nextQuestion", JSON.stringify({ gameId: id }))} className="w-full h-9 mt-4 max-w-lg mx-auto bg-cyan-400 text-cyan-900 hover:bg-cyan-300 rounded-md flex justify-center items-center gap-3">
                 <div>

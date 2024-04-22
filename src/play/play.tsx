@@ -16,7 +16,7 @@ export default function Play() {
     const playGame = async () => {
         setLoading(true)
         setError(null)
-        if (!selectedSet) {
+        if (!selectedSet || selectedSet === "") {
             setError('Please select a set to continue')
             setLoading(false)
             return
@@ -76,7 +76,7 @@ export default function Play() {
                         : data && data.length
                             ? <>
                                 <div className='text-lg text-white mb-2'>Select a question set to get started</div>
-                                <Select name='test' id='test' className='w-full' onChange={v => setSelectedSet(v?.value ?? "")} options={data.map(set => ({ value: set.id.toString(), label: set.name }))} />
+                                <Select value={data.map(y => ({ label: y.name, value: y.id.toString() })).filter(x => selectedSet === x.value)} name='test' id='test' className='w-full' onChange={v => setSelectedSet(v?.value ?? "")} options={data.map(set => ({ value: set.id.toString(), label: set.name }))} />
                                 <button disabled={loading} onClick={playGame} className='w-full py-2 rounded-md bg-cyan-400 disabled:bg-cyan-700 disabled:text-cyan-400 flex flex-row items-center justify-center gap-2 text-cyan-900'>
                                     {
                                         loading

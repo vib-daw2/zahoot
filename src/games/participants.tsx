@@ -11,6 +11,8 @@ import { Participant } from '@/utils/schemas/participants';
 
 type Props = {
     isAdmin: boolean
+    participants: Participant[]
+    setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>
 }
 
 
@@ -64,7 +66,7 @@ const ParticipantMouse = ({ participant: { x, y, name } }: { participant: Partic
     )
 }
 
-const ParticipantCard = React.memo(({ name, isAdmin, remove }: { name: string, isAdmin: boolean, remove: () => void }) => {
+const ParticipantCard = React.memo(({ name, isAdmin, remove, id }: { name: string, isAdmin: boolean, remove: () => void, id: number }) => {
     const username = React.useMemo(() => name, [name])
     return (
         <motion.div
@@ -78,7 +80,7 @@ const ParticipantCard = React.memo(({ name, isAdmin, remove }: { name: string, i
         >
             <UserRound size={48} />
             <div className='mt-2'>{username}</div>
-            {isAdmin && <button onClick={() => isAdmin && remove()} className='absolute top-1 right-1 text-red-500 p-1 rounded-md hover:bg-red-950'>
+            {isAdmin && id !== 1 && <button onClick={() => isAdmin && remove()} className='absolute top-1 right-1 text-red-500 p-1 rounded-md hover:bg-red-950'>
                 <XIcon size={24} />
             </button>}
         </motion.div>
@@ -87,64 +89,14 @@ const ParticipantCard = React.memo(({ name, isAdmin, remove }: { name: string, i
     return prevProps.name === nextProps.name
 })
 
-export default function Participants({ isAdmin }: Props) {
+export default function Participants({ isAdmin, participants, setParticipants }: Props) {
     const maxParticipants = 100
-    const [participants, setParticipants] = React.useState<Participant[]>([])
     const [copied, setCopied] = React.useState(false)
     const params = useParams()
     const { username, setUsername } = useUsername()
     const [currentUser, setCurrentUser] = React.useState<Participant | null>(null)
-    const [isConnected, setIsConnected] = React.useState(socket.connected)
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
-    React.useEffect(() => {
-        function onConnect() {
-            setIsConnected(true);
-        }
-
-        function onDisconnect() {
-            setIsConnected(false);
-            navigate('/')
-        }
-
-        function onJoinedGame(data: string) {
-            const { currentUser: user, participants }: { currentUser: Participant, participants: Participant[] } = JSON.parse(data)
-            console.log({ user, participants })
-            setCurrentUser(user)
-            setParticipants(participants)
-        }
-
-        function onCurrentPlayers(data: string) {
-            console.log(data)
-            const players = JSON.parse(data) satisfies Participant[] as Participant[]
-            if (players.length === 0) {
-                socket.disconnect()
-                navigate('/')
-            }
-            setParticipants(players)
-        }
-
-
-
-        function forceDisconnect() {
-            console.log('force disconnect')
-            socket.disconnect()
-            navigate('/')
-        }
-
-        socket.on('connect', onConnect);
-        socket.on('disconnect', onDisconnect);
-        socket.on('joinedGame', onJoinedGame)
-        socket.on("currentPlayers", onCurrentPlayers)
-        socket.on("forceDisconnect", forceDisconnect)
-        return () => {
-            socket.off('connect', onConnect);
-            socket.off('disconnect', onDisconnect);
-            socket.off('joinedGame', onJoinedGame)
-            socket.off("currentPlayers", onCurrentPlayers)
-            socket.off("forceDisconnect", forceDisconnect)
-        };
-    }, []);
 
     React.useEffect(() => {
         // Initialize lastMoveTime with the current time when the component mounts
@@ -222,13 +174,13 @@ export default function Participants({ isAdmin }: Props) {
             </div>
             <div className='w-full flex justify-between max-w-6xl mt-4 px-8 border-b border-b-slate-600 py-4 border-t-slate-600 border-t items-center'>
                 <div className={`flex-1 text-light text-xl ${isAdmin ? "text-left" : "text-center"}`}>Players: {participants.length}/{maxParticipants}</div>
-                {isAdmin && <button onClick={() => socket.emit("gameStart", JSON.stringify({ gameId: id }))} className='py-2 px-2 w-[200px] text-cyan-900 bg-cyan-400 rounded-md font-medium flex justify-center items-center'>
+                {isAdmin && <button disabled={participants.length < 2} onClick={() => socket.emit("gameStart", JSON.stringify({ gameId: id }))} className='disabled:bg-opacity-50 py-2 px-2 w-[200px] text-cyan-900 bg-cyan-400 rounded-md font-medium flex justify-center items-center'>
                     <PlayIcon size={24} className='mr-2 fill-cyan-900' />
                     Start Game
                 </button>}
             </div>
             <motion.div variants={containerMotion} className='flex flex-row justify-center h-96 p-2 overflow-y-auto items-center max-w-6xl flex-wrap gap-6 mt-4'>
-                {participants.sort((a, b) => a.id - b.id).map((participant, i) => (<ParticipantCard key={participant.id} name={participant.name} isAdmin={isAdmin} remove={() => removeParticipant(i)} />))}
+                {participants.sort((a, b) => a.id - b.id).map((participant, i) => (<ParticipantCard id={participant.id} key={participant.id} name={participant.name} isAdmin={isAdmin} remove={() => removeParticipant(i)} />))}
             </motion.div>
             <Toaster richColors />
         </FollowerPointerCard>

@@ -5,6 +5,7 @@ import React from 'react'
 import { useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 import DialogContainer from '../ui/dialog-container'
+import { toast } from 'sonner'
 
 type Props = {
     defaultName: string;
@@ -80,14 +81,26 @@ export default function SaveDialog({ defaultName, defaultDescription, id }: Prop
         }
     }, [])
 
+    const openSaveDialog = () => {
+        if (questions.length === 0) {
+            toast.error('You must have at least one question to save a set')
+            return
+        }
+        if (questions.map(q => q.answers.length).filter(x => x < 4)) {
+            toast.error('All questions must have 4 answers')
+            return
+        }
+        setOpen(true)
+    }
+
     return (
         <>
-            <div className='flex absolute top-16 z-[9999] gap-3 justify-end items-center right-10'>
-                <button onClick={emptyQuestions} className='gap-3 text-red-400 hover:bg-red-900/30 border border-red-400 px-4 py-2 flex justify-center items-center rounded-md'>
+            <div className='flex absolute top-16 gap-3 justify-end items-center right-10'>
+                <button disabled={questions.length === 0} onClick={emptyQuestions} className='disabled:opacity-60 disabled:hover:bg-slate-950 z-50 gap-3 text-red-400 hover:bg-red-900/30 border border-red-400 px-4 py-2 flex justify-center items-center rounded-md'>
                     <XIcon className=' text-red-400' />
                     Reset Set
                 </button>
-                <button onClick={() => setOpen(true)} className=' z-[9999] gap-3 hover:bg-slate-800 text-cyan-400 border border-cyan-400 px-4 py-2 flex justify-center items-center rounded-md'>
+                <button onClick={openSaveDialog} disabled={questions.length === 0} className='disabled:opacity-60 disabled:hover:bg-slate-950 z-50 gap-3 hover:bg-slate-800 text-cyan-400 border border-cyan-400 px-4 py-2 flex justify-center items-center rounded-md'>
                     <SaveIcon className=' text-cyan-400' />
                     <div>Save Set</div>
                 </button>

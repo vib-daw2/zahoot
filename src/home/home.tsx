@@ -76,7 +76,7 @@ export default function Home({ }: Props) {
     }, [])
 
     const isPinValid = async (pin: string) => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/games/exists?pin=${pin}`, {
+        const response = await fetch(`${(import.meta.env.VITE_API_URL ?? "http://localhost:3000/api")}/games/exists?pin=${pin}`, {
             method: 'HEAD',
         })
         return response.status === 200

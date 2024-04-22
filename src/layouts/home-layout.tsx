@@ -9,7 +9,6 @@ export default function HomeLayout() {
         <>
             <Navbar />
             <Outlet />
-            <Toaster richColors />
         </>
     )
 }

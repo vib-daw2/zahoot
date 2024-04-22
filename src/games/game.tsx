@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Participants from './participants'
 import { socket } from '@/lib/socket'
 import { GameQuestion, Participant } from '@/utils/schemas/participants'
@@ -19,6 +19,9 @@ export default function Game({ }: Props) {
     const [players, setPlayers] = React.useState<Participant[]>([])
     const [question, setQuestion] = React.useState<GameQuestion | null>(null)
     const [allResponded, setAllResponded] = React.useState(false)
+    const [participants, setParticipants] = React.useState<Participant[]>([])
+
+    const navigate = useNavigate()
 
     React.useEffect(() => {
         function onJoinedGame(data: string) {
@@ -28,6 +31,7 @@ export default function Game({ }: Props) {
             if (user.id === 1) {
                 setIsAdmin(true)
             }
+            setParticipants(participants)
         }
 
         function onFinishRound(data: string) {
@@ -45,6 +49,12 @@ export default function Game({ }: Props) {
             setAllResponded(false)
         }
 
+        function forceDisconnect() {
+            console.log('force disconnect')
+            socket.disconnect()
+            navigate('/')
+        }
+
         function onGameStart(data: string) {
             const question = JSON.parse(data) as GameQuestion
             setQuestion(question)
@@ -57,12 +67,29 @@ export default function Game({ }: Props) {
             setAllResponded(true)
         }
 
+        function onDisconnect() {
+            navigate('/')
+        }
+
+        function onCurrentPlayers(data: string) {
+            console.log(data)
+            const players = JSON.parse(data) satisfies Participant[] as Participant[]
+            if (players.length === 0) {
+                socket.disconnect()
+                navigate('/')
+            }
+            setParticipants(players)
+        }
+
         socket.on('joinedGame', onJoinedGame)
         socket.on('roundEnd', onFinishRound)
         socket.on('nextQuestion', onNextQuestion)
         socket.on('gameStart', onGameStart)
         socket.on('gameEnd', () => setPhase("END"))
         socket.on('allResponded', onAllResponded)
+        socket.on('disconnect', onDisconnect)
+        socket.on('forceDisconnect', forceDisconnect)
+        socket.on("currentPlayers", onCurrentPlayers)
         return () => {
             socket.off('joinedGame', onJoinedGame)
             socket.off('roundEnd', onFinishRound)
@@ -70,12 +97,15 @@ export default function Game({ }: Props) {
             socket.off('gameStart', onGameStart)
             socket.off('gameEnd')
             socket.off('allResponded', onAllResponded)
+            socket.off('disconnect', onDisconnect)
+            socket.off('forceDisconnect', forceDisconnect)
+            socket.off("currentPlayers", onCurrentPlayers)
         }
     }, [])
 
     switch (phase) {
         case "LOBBY":
-            return <Participants isAdmin={isAdmin} />
+            return <Participants isAdmin={isAdmin} participants={participants} setParticipants={setParticipants} />
         case "IN_GAME":
             return <Exam allResponded={allResponded} isAdmin={isAdmin} userId={user?.id} question={question} />
         case "RESULTS":

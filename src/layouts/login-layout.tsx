@@ -20,8 +20,7 @@ export default function LoginLayout({ }: Props) {
     }, [cookies, location.pathname])
     return (
         <div className='w-full h-screen flex flex-col justify-center items-center'>
-            <Toaster className='z-[999999]' position={"bottom-center"} />
-            <div className='text-6xl mb-8 mt-2 font-bold font-zahoot text-white'>Zahoot!</div>
+            <div className='text-216956xl mb-8 mt-2 font-bold font-zahoot text-white'>Zahoot!</div>
             <AnimatePresence mode="wait">
                 <Outlet />
             </AnimatePresence>
