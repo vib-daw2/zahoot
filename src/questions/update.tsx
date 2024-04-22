@@ -36,7 +36,6 @@ export default function UpdateQuestions({ action = "create" }: Props) {
             return null
         }
         const values = await response.json()
-        console.log({ values })
         return values as { name: string, description: string, questions: FormattedQuestion[] }
     })
 
@@ -57,8 +56,6 @@ export default function UpdateQuestions({ action = "create" }: Props) {
 
     React.useEffect(() => {
         if (data) {
-            console.log({ data })
-            console.log({ name: data.name, description: data.description })
             setQuestions(data.questions.map(unformatQuestion))
             setSetName(data.name)
             setSetDescription(data.description)

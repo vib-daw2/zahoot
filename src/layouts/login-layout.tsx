@@ -14,7 +14,6 @@ export default function LoginLayout({ }: Props) {
 
     React.useEffect(() => {
         if (cookies.accessToken) {
-            console.log('redirecting')
             navigation('/')
         }
     }, [cookies, location.pathname])

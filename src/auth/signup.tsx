@@ -49,7 +49,6 @@ export default function Signup() {
     const navigation = useNavigate()
 
     const onSubmit: SubmitHandler<z.infer<typeof signupRequestSchema>> = async (input) => {
-        console.log(input)
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL ?? "http://localhost:3000/api"}/auth/signup`, {
                 method: "POST",
@@ -62,7 +61,6 @@ export default function Signup() {
             if (data.error) {
                 setError(data.message)
             } else {
-                console.log(data)
                 navigation('/login?action=signup')
             }
         } catch (error) {

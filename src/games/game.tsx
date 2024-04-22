@@ -26,7 +26,6 @@ export default function Game({ }: Props) {
     React.useEffect(() => {
         function onJoinedGame(data: string) {
             const { currentUser: user, participants }: { currentUser: Participant, participants: Participant[] } = JSON.parse(data)
-            console.log({ user, participants })
             setUser(user)
             if (user.id === 1) {
                 setIsAdmin(true)
@@ -35,14 +34,12 @@ export default function Game({ }: Props) {
         }
 
         function onFinishRound(data: string) {
-            console.log(data)
             const players = JSON.parse(data) as Participant[]
             setPlayers(players)
             setPhase("RESULTS")
         }
 
         function onNextQuestion(data: string) {
-            console.log(data)
             const question = JSON.parse(data) as GameQuestion
             setQuestion(question)
             setPhase("IN_GAME")
@@ -50,7 +47,6 @@ export default function Game({ }: Props) {
         }
 
         function forceDisconnect() {
-            console.log('force disconnect')
             socket.disconnect()
             navigate('/')
         }
@@ -58,7 +54,6 @@ export default function Game({ }: Props) {
         function onGameStart(data: string) {
             const question = JSON.parse(data) as GameQuestion
             setQuestion(question)
-            console.log('game started')
             setPhase("IN_GAME")
             //navigate(`/games/${id}/test`)
         }
@@ -72,7 +67,6 @@ export default function Game({ }: Props) {
         }
 
         function onCurrentPlayers(data: string) {
-            console.log(data)
             const players = JSON.parse(data) satisfies Participant[] as Participant[]
             if (players.length === 0) {
                 socket.disconnect()

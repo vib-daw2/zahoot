@@ -6,7 +6,6 @@ import { getSetByIdResponse } from "~/types/routes/sets/getSetByIdResponse";
 import SetOptions from "./set-options";
 
 const CardSet = ({ id, set }: { id: number, set: getSetByIdResponse }) => {
-    console.log({ set })
     const { setQuestions } = useQuestion()
     const formattedQuestions = set.questions.map(x => unformatQuestion(x as FormattedQuestion))
 

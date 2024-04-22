@@ -92,7 +92,6 @@ export default function Home({ }: Props) {
                 setError('Username must be at least 5 characters')
                 return
             }
-            console.log('goNext')
             navigate(`/games/${pin}`)
         } else {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/games/exists?pin=${pin}`, {

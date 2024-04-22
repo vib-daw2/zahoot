@@ -24,8 +24,6 @@ export default function Sets() {
 
     const { data, isLoading, isError, error } = useQuery('mySets', fetchMySets)
 
-    React.useEffect(() => console.log(data), [data])
-
     return (
         <div className='pt-16 px-8 '>
             <div className='text-white pb-2 border-b'>

@@ -14,7 +14,6 @@ type Props = {
 }
 
 export default function SaveDialog({ defaultName, defaultDescription, id }: Props) {
-    console.log({ defaultName, defaultDescription, id })
     const { questions, emptyQuestions } = useQuestion()
     const [cookie,] = useCookies(['accessToken'])
     const [open, setOpen] = React.useState(false)
@@ -31,7 +30,6 @@ export default function SaveDialog({ defaultName, defaultDescription, id }: Prop
     }, [defaultName, defaultDescription])
 
     const save = async () => {
-        console.log({ name, description, questions })
         if (!id) {
             setStatus("Creating set...")
             const setData = await createSet({ name, description, token: cookie.accessToken })
@@ -39,7 +37,6 @@ export default function SaveDialog({ defaultName, defaultDescription, id }: Prop
                 setError(true)
                 return
             }
-            console.log(setData)
             setStatus("Uploading questions...")
             const success = await uploadQuestions({ id: setData.id, questions: questions, token: cookie.accessToken })
             if (success) {

@@ -19,17 +19,14 @@ export default function Login() {
 
     React.useEffect(() => {
         if (params[0].get('action') === 'logout') {
-            console.log('logout')
             toast.info('You have been logged out')
         } else if (params[0].get('action') === 'signup') {
-            console.log('signup')
             toast.success('Account created successfully. You can now login')
         }
     }, [])
 
     const onSubmit: SubmitHandler<z.infer<typeof loginRequestSchema>> = async (data) => {
         setError(null)
-        console.log(import.meta.env.VITE_API_URL)
         const response = await fetch(`${import.meta.env.VITE_API_URL ?? "http://localhost:3000/api"}/auth/login`, {
             method: "POST",
             body: JSON.stringify(data),

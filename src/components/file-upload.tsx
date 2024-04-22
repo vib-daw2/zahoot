@@ -30,10 +30,8 @@ function ImageDisplay({ file }: { file: File }) {
                 draggable={isDraggable}
                 onDragStart={(e) => e.preventDefault()}
                 onDragEnd={(e, info) => {
-                    console.log(info)
                     const parent = imgRef.current?.parentElement?.getBoundingClientRect()
                     if (imgRef.current && parent) {
-                        console.log("In")
                         const maxX = parent.width
                         const maxY = parent.height
                         const minX = 0
@@ -45,12 +43,8 @@ function ImageDisplay({ file }: { file: File }) {
                         const newX = x > maxX ? maxX : x < minX ? minX : x
                         const newY = y > maxY ? maxY : y < minY ? minY : y
 
-                        console.log({ newX, newY })
-                        console.log({ parent })
-
                         imgRef.current.classList.remove('object-left-top')
                         imgRef.current.style.objectPosition = `${newX}px ${newY}px`
-                        console.log(imgRef.current.style.objectPosition)
                     }
                 }}
                 alt=""

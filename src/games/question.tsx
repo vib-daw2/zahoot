@@ -81,10 +81,6 @@ export default function Question({ num, question: { question, solutions }, selec
         }
     }
 
-    React.useEffect(() => {
-        console.log({ selectedOption, status })
-    }, [selectedOption, status])
-
     return (
         <>
             <div className='md:flex-1 p-4'>

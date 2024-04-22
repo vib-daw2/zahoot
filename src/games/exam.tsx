@@ -28,9 +28,6 @@ export default function Exam({ isAdmin, userId, question, allResponded }: Props)
         }
     }, [allResponded])
 
-    React.useEffect(() => {
-        console.log({ solution, isCorrect })
-    }, [solution, isCorrect])
 
     const validateSolution = React.useCallback((correctSolution: number) => {
         if (correctSolution === solution) {
@@ -50,10 +47,8 @@ export default function Exam({ isAdmin, userId, question, allResponded }: Props)
 
         function onCorrectSolution(data: string) {
             const correctSolution = JSON.parse(data) as number
-            console.log({ isAdmin, roundEnded })
             setSolution(correctSolution)
             if (isAdmin && roundEnded) {
-                console.log({ correctSolution })
                 setSolution(correctSolution)
                 setIsCorrect("CORRECT")
             } else {
