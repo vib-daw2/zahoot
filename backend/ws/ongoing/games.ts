@@ -31,16 +31,19 @@ class Game {
     public players: Player[];
     public questions: Question[];
     public currentQuestion: number;
+    public running: boolean;
 
     constructor(id: string) {
         this.id = id;
         this.players = [];
         this.questions = []
         this.currentQuestion = 0;
+        this.running = false;
     }
 
     // Añade un jugador a la partida
     public addPlayerToGame(playerName: string, socketId: string, isHost?: boolean): number {
+        if (this.running) return -1;
         if (this.players.map(x => x.name).includes(playerName)) {
             this.players = this.players.filter(x => x.name !== playerName)
         }

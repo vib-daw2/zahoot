@@ -21,7 +21,9 @@ export default async function joinGame(data: string, socket: Socket) {
     }
 
     let id = await running.joinGame(dataJ.gameId, dataJ.name, socket.id); // Añade el jugador al juego
-
+    if (id == -1){
+        socket.emit("forceDisconnect", JSON.stringify({ message : "Game is already running"}))
+    }
     await socket.join(dataJ.gameId as string); // Unir al jugador a la sala de WS
     console.log(`User ${id} joined game ${dataJ.gameId}`);
 
