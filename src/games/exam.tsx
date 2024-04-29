@@ -46,9 +46,9 @@ export default function Exam({ isAdmin, userId, question, allResponded }: Props)
     React.useEffect(() => {
 
         function onCorrectSolution(data: string) {
-            const correctSolution = JSON.parse(data) as number
-            setSolution(correctSolution)
-            if (isAdmin && roundEnded) {
+            const { solution: correctSolution, allResponded } = JSON.parse(data) as { solution: number, allResponded: boolean }
+            // setSolution(correctSolution)
+            if (allResponded && isAdmin) {
                 setSolution(correctSolution)
                 setIsCorrect("CORRECT")
             } else {

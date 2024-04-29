@@ -83,8 +83,8 @@ export default function SaveDialog({ defaultName, defaultDescription, id }: Prop
             toast.error('You must have at least one question to save a set')
             return
         }
-        if (questions.map(q => q.answers.length).filter(x => x < 4)) {
-            toast.error('All questions must have 4 answers')
+        if (questions.map(q => q.answers.length).filter(x => x < 4).length > 0) {
+            toast.error(`All questions must have 4 answers - Questions ${questions.map((q, i) => q.answers.length < 4 ? i + 1 : '').filter(x => x !== '').join(', ')} are missing answers`)
             return
         }
         setOpen(true)
