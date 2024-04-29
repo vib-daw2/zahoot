@@ -5,36 +5,10 @@ import { ArrowRightIcon } from 'lucide-react';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-type Props = {}
-
 interface Player {
     name: string;
     points: number;
     responses: boolean[];
-}
-
-function generateRandomResponses(length: number): boolean[] {
-    const responses: boolean[] = [];
-    for (let i = 0; i < length; i++) {
-        responses.push(Math.random() < 0.5); // 50% chance of true/false
-    }
-    return responses;
-}
-
-function generatePlayers(numPlayers: number, numResponses: number): Player[] {
-    const players: Player[] = [];
-    for (let i = 1; i <= numPlayers; i++) {
-        const playerName = `Player ${i}`;
-        const responses = generateRandomResponses(numResponses);
-        const points = responses.filter(response => response).length * 100;
-        const player: Player = {
-            name: playerName,
-            points: points,
-            responses: responses
-        };
-        players.push(player);
-    }
-    return players;
 }
 
 function PlayerRank({ player, maxScore, score, setScore, rank }: { player: Player, maxScore: number, score: number, setScore: (score: number) => void, rank: number }) {
@@ -42,6 +16,9 @@ function PlayerRank({ player, maxScore, score, setScore, rank }: { player: Playe
 
     React.useEffect(() => {
         const interval = setInterval(() => {
+            if (player.points === 0) {
+                return;
+            }
             if (score < player.points && player.points > 0) {
                 setScore(
                     Math.min(player.points, score + 100)
@@ -103,7 +80,7 @@ const Leaderboard = ({ initialPlayers, isAdmin, ended = false }: { initialPlayer
     return (
         <div className='p-4 w-full h-screen flex justify-center items-center text-white flex-col'>
             <h1 className='text-4xl font-zahoot uppercase'>Leaderboard</h1>
-            {ended && <h2 className='text-2xl font-zahoot uppercase'>Game Over - <span className=' font-bold text-cyan-400'>{initialPlayers.find(x => x.points === Math.max(...players.map(p => (p.points ?? 0))))?.name}</span> Won!</h2>}
+            {ended && <h2 className='text-2xl font-zahoot uppercase'>Game Over - <span className=' font-bold text-cyan-400'>{initialPlayers.sort((a, b) => a.id - b.id).filter(x => x.points === Math.max(...players.map(p => (p.points ?? 0)))).map(x => x.name).join(", ")}</span> Won!</h2>}
             <div className='flex flex-col justify-start items-start mt-2 max-h-[60vh] overflow-y-auto overflow-x-hidden pr-4'>
                 {players.reduce((acc, x) => x.points + acc, 0) === 0
                     ? <div className='text-xl text-slate-300'>No players have scored yet 💩</div>
