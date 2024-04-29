@@ -20,6 +20,7 @@ export default function Game({ }: Props) {
     const [question, setQuestion] = React.useState<GameQuestion | null>(null)
     const [allResponded, setAllResponded] = React.useState(false)
     const [participants, setParticipants] = React.useState<Participant[]>([])
+    const [currentUser, setCurrentUser] = React.useState<Participant | null>(null)
 
     const navigate = useNavigate()
 
@@ -72,6 +73,7 @@ export default function Game({ }: Props) {
                 socket.disconnect()
                 navigate('/')
             }
+            console.log(players)
             setParticipants(players)
         }
 
@@ -99,7 +101,13 @@ export default function Game({ }: Props) {
 
     switch (phase) {
         case "LOBBY":
-            return <Participants isAdmin={isAdmin} participants={participants} setParticipants={setParticipants} />
+            return <Participants
+                isAdmin={isAdmin}
+                participants={participants}
+                setParticipants={setParticipants}
+                currentUser={user}
+                setCurrentUser={setUser}
+            />
         case "IN_GAME":
             return <Exam allResponded={allResponded} isAdmin={isAdmin} userId={user?.id} question={question} />
         case "RESULTS":

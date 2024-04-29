@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import running from "../ongoing/games";
+import io from "../../server";
 
 export default async function moveMouse(data: string, socket: Socket) {
     const { gameId, id, x, y}: { gameId: string, id: number, x: number, y: number } = JSON.parse(data);
@@ -12,5 +13,5 @@ export default async function moveMouse(data: string, socket: Socket) {
     }
     player.x = x;
     player.y = y;
-    socket.to(gameId).emit("currentPlayers", JSON.stringify(players.sort((a, b) => a.id - b.id)));
+    io.to(gameId).emit("currentPlayers", JSON.stringify(players.sort((a, b) => a.id - b.id)));
 }

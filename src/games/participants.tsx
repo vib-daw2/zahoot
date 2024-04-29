@@ -13,6 +13,8 @@ type Props = {
     isAdmin: boolean
     participants: Participant[]
     setParticipants: React.Dispatch<React.SetStateAction<Participant[]>>
+    currentUser: Participant | null
+    setCurrentUser: React.Dispatch<React.SetStateAction<Participant | null>>
 }
 
 
@@ -89,12 +91,11 @@ const ParticipantCard = React.memo(({ name, isAdmin, remove, id }: { name: strin
     return prevProps.name === nextProps.name
 })
 
-export default function Participants({ isAdmin, participants, setParticipants }: Props) {
+export default function Participants({ isAdmin, participants, setParticipants, currentUser, setCurrentUser }: Props) {
     const maxParticipants = 100
     const [copied, setCopied] = React.useState(false)
     const params = useParams()
     const { username, setUsername } = useUsername()
-    const [currentUser, setCurrentUser] = React.useState<Participant | null>(null)
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
 
@@ -107,7 +108,9 @@ export default function Participants({ isAdmin, participants, setParticipants }:
                 navigate('/')
             }
             const currentTime = Date.now();
+            console.log(socket.connected, currentUser, (currentTime - lastMoveTime) > 50)
             if (socket.connected && currentUser && (currentTime - lastMoveTime) > 50) {
+                console.log('sending mouse position')
                 socket.emit('moveMouse', JSON.stringify({ gameId: id, id: currentUser.id, x: e.clientX, y: e.clientY }));
                 setCurrentUser({ ...currentUser, x: e.clientX, y: e.clientY });
                 lastMoveTime = currentTime; // Update lastMoveTime with the current time
