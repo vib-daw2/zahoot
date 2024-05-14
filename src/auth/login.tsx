@@ -23,7 +23,7 @@ export default function Login() {
         } else if (params[0].get('action') === 'signup') {
             toast.success('Account created successfully. You can now login')
         }
-    }, [params])
+    }, [])
 
     const onSubmit: SubmitHandler<z.infer<typeof loginRequestSchema>> = async (data) => {
         setError(null)
