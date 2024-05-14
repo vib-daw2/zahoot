@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only ./server.ts",
-    "start": "tsc && npx prisma db push && node ./dist/server.js",
+    "start": "npx prisma generate && tsc && npx prisma db push && node ./dist/server.js",
     "prisma": "npx prisma db push && npx prisma studio",
     "lint": "eslint . --ext .ts"
   },

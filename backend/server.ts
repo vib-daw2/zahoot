@@ -39,7 +39,8 @@ app.use("/api/profile", profileRouter); // Get user profile
 
 io.on("connection", handleConnection);
 
-const port = process.env.PORT || "0.0.0.0:3000";
+const port = "0.0.0.0:3000";
+
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

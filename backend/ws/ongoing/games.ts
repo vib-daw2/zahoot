@@ -124,7 +124,7 @@ class GamePool {
         // En caso que no se haya creado el juego, se crea
         if (!game) {
             game = new Game(gameId);
-            const questions = await (getDb()).ongoingGame.findMany({
+            const questions = await getDb().ongoingGame.findMany({
                 select: {
                     QuestionSet: {
                         select: {
